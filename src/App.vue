@@ -1,9 +1,8 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import NavbarCom from '@/components/icons/Navbar/NavbarCom.vue'
+</script>
 
 <template>
-  <header>
-    <div class="wrapper">
-      <h1 class="text-3xl font-bold underline">Hello world!</h1>
-    </div>
-  </header>
+  <NavbarCom />
+  <RouterView />
 </template>
