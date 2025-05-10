@@ -15,4 +15,5 @@ export default defineConfig({
       '@': fileURLToPath(new URL('./src', import.meta.url))
     },
   },
+  base: '/cpdc-platform/', // 替换为GitHub仓库名称，确保GitHub Pages可以正确访问资源
 })
