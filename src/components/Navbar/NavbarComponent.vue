@@ -41,9 +41,9 @@
   <Transition name="slide-down">
     <div
       v-if="isMobileMenuOpen"
-      class="w-full absolute top-20 md:top-23.5 lg:hidden overflow-hidden z-50 backdrop-blur-[24px]"
+      class="w-full absolute top-20 md:top-23.5 visible lg:invisible z-50"
     >
-      <div class="bg-primary-700/70">
+      <div class="my-backdrop-blur-lg">
         <div
           v-for="item of navItem"
           class="text-md text-primary-100 px-3 md:px-5 py-2 flex items-center justify-between"
@@ -105,16 +105,20 @@ const isMobileMenuOpen = ref(false)
 <style scoped>
 .slide-down-enter-active,
 .slide-down-leave-active {
-  transition: all 0.5s ease-out;
+  transition: max-height 0.5s ease-out;
   max-height: 300px;
-  opacity: 1;
   overflow: hidden;
 }
 
 .slide-down-enter-from,
 .slide-down-leave-to {
   max-height: 0;
-  opacity: 0;
   overflow: hidden;
+}
+
+.my-backdrop-blur-lg {
+  background: rgba(148, 18, 6, 0.7);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
 }
 </style>
