@@ -1,7 +1,7 @@
 <template>
   <CarouselComponent
     :images="images"
-    :autoplay="false"
+    :autoplay="true"
     :autoplayInterval="4000"
     :swipeThreshold="50"
   />
