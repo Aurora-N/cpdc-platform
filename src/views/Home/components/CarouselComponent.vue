@@ -1,10 +1,5 @@
 <template>
-  <div
-    ref="carouselRef"
-    class="carousel relative overflow-hidden"
-    @mouseenter="isHovering = true"
-    @mouseleave="isHovering = false"
-  >
+  <div ref="carouselRef" class="carousel relative overflow-hidden">
     <!-- 图片容器 -->
     <div
       class="carousel-inner flex h-full transition-transform duration-300"

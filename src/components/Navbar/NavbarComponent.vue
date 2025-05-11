@@ -41,7 +41,7 @@
   <Transition name="slide-down">
     <div
       v-if="isMobileMenuOpen"
-      class="w-full absolute top-20 md:top-23.5 lg:hidden overflow-hidden z-50 backdrop-blur-sm"
+      class="w-full absolute top-20 md:top-23.5 lg:hidden overflow-hidden z-50 backdrop-blur-[24px]"
     >
       <div class="bg-primary-700/70">
         <div
