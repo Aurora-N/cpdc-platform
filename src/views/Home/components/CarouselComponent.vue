@@ -134,13 +134,13 @@ const handleMouseDown = (e: MouseEvent) => {
 
 const handleMouseMove = () => {
   if (!isDragging.value) return
-  
+
   currentDragX.value = mouseX.value
 }
 
 const handleMouseUp = () => {
   if (!isDragging.value) return
-  
+
   const diff = dragDiff.value
 
   // 判断是否需要切换幻灯片
@@ -176,9 +176,9 @@ const handleTouchStart = (e: TouchEvent) => {
 
 const handleTouchMove = (e: TouchEvent) => {
   if (!isDragging.value) return
-  
+
   currentDragX.value = e.touches[0].clientX
-  
+
   // 防止页面滚动
   e.preventDefault()
 }
@@ -191,7 +191,7 @@ const handleTouchEnd = () => {
 const calculateTranslateX = computed(() => {
   if (isDragging.value) {
     const diff = dragDiff.value
-    
+
     // 限制拖动范围，防止过度拖动
     if (
       (currentIndex.value === 0 && diff > 0) ||
@@ -200,10 +200,10 @@ const calculateTranslateX = computed(() => {
       // 在边缘位置时，减少拖动效果
       return -currentIndex.value * containerWidth.value + diff * 0.3
     }
-    
+
     return -currentIndex.value * containerWidth.value + diff
   }
-  
+
   return -currentIndex.value * containerWidth.value
 })
 
@@ -219,9 +219,13 @@ const handleTransitionEnd = () => {
 }
 
 // 使用 useIntervalFn 处理自动播放
-const { pause, resume, isActive } = useIntervalFn(() => {
-  nextSlide()
-}, props.autoplayInterval, { immediate: false, immediateCallback: false })
+const { pause, resume, isActive } = useIntervalFn(
+  () => {
+    nextSlide()
+  },
+  props.autoplayInterval,
+  { immediate: false, immediateCallback: false },
+)
 
 // 切换到下一张图片
 const nextSlide = () => {
@@ -260,7 +264,7 @@ onMounted(() => {
     carouselRef.value.addEventListener('touchmove', handleTouchMove, { passive: false })
     carouselRef.value.addEventListener('touchend', handleTouchEnd)
   }
-  
+
   // 启动自动播放
   if (props.autoplay) {
     resume()
@@ -312,15 +316,15 @@ watch(
   cursor: grabbing; /* 拖动时显示抓取中光标 */
 }
 
-@media (max-width: 640px) {
+@media (max-width: 1024px) {
   .carousel {
-    height: 200px;
+    height: 450px;
   }
 }
 
-@media (max-width: 1024px) {
+@media (max-width: 640px) {
   .carousel {
-    height: 400px;
+    height: 250px;
   }
 }
 
