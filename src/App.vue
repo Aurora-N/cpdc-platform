@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import NavbarCom from '@/components/icons/Navbar/NavbarCom.vue'
+import NavbarComponent from '@/components/Navbar/NavbarComponent.vue'
 </script>
 
 <template>
-  <NavbarCom />
+  <NavbarComponent />
   <RouterView />
 </template>

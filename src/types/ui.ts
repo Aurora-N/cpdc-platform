@@ -4,3 +4,8 @@ export interface NavItemType {
   link: string;
   subitems?: NavItemType[];
 }
+
+export interface ImageType {
+  src: string;
+  alt: string;
+}

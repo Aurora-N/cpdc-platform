@@ -45,8 +45,8 @@ const navItem: NavItemType[] = [
     subitems: [],
   },
   {
-    name: '数据库',
-    link: '/database',
+    name: '藏品库',
+    link: '/collections',
     subitems: [],
   },
   {
