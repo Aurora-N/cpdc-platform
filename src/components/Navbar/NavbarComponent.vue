@@ -1,5 +1,5 @@
 <template>
-  <header class="bg-primary flex px-3 sm:px-10 md:px-15 py-3 justify-between relative">
+  <header class="bg-primary flex px-3 md:px-5 lg:px-15 py-3 justify-between relative">
     <!-- Header Left - Logo & Title -->
     <div>
       <h1 class="text-2xl md:text-3xl font-semibold text-white sm:mb-0.5 md:mb-1.5">
@@ -14,7 +14,7 @@
       <div
         v-for="item of navItem"
         class="text-xl text-primary-100 px-4 py-2 flex items-center justify-center rounded-sm mr-2 last:mr-0 hover:text-white hover:bg-primary-200 ease-in-out duration-200"
-        :class="selectedItem === item.name ? activedStyle : ''"
+        :class="selectedItem === item.name ? 'text-white bg-primary-500' : ''"
         :key="item.name"
         :title="`前往${item.name}页面`"
         @click="setActiveItem(item)"
@@ -27,7 +27,7 @@
     <!-- 移动端菜单按钮 -->
     <div class="flex items-center lg:hidden" @click="isMobileMenuOpen = !isMobileMenuOpen">
       <button
-        class="text-xl text-primary-100 p-3 flex items-center justify-center rounded-sm hover:text-white hover:bg-primary-200 ease-in-out duration-200"
+        class="text-xl text-primary-100 p-1 flex items-center justify-center"
         title="打开主菜单"
       >
         <span class="sr-only">打开主菜单</span>
@@ -41,13 +41,13 @@
   <Transition name="slide-down">
     <div
       v-if="isMobileMenuOpen"
-      class="w-full absolute top-20 md:top-23.5 lg:hidden overflow-hidden z-50"
+      class="w-full absolute top-20 md:top-23.5 lg:hidden overflow-hidden z-50 backdrop-blur-sm"
     >
-      <div class="bg-primary-600">
+      <div class="bg-primary-700/70">
         <div
           v-for="item of navItem"
-          class="text-xl text-primary-100 px-4 py-2 flex items-center justify-between hover:text-white hover:bg-primary-200"
-          :class="selectedItem === item.name ? activedStyle : ''"
+          class="text-md text-primary-100 px-3 md:px-5 py-2 flex items-center justify-between"
+          :class="selectedItem === item.name ? 'text-white bg-primary-300/50' : ''"
           :key="item.name"
           :title="`前往${item.name}页面`"
           @click="setActiveItem(item)"
@@ -67,8 +67,6 @@ import type { NavItemType } from '@/types/ui'
 import ArrowDown from '@/components/icons/ArrowDown.vue'
 import NavMenu from '@/components/icons/NavMenu.vue'
 import NavMenuClose from '@/components/icons/NavMenuClose.vue'
-
-const activedStyle = 'text-white bg-primary-300'
 
 const selectedItem = ref<string>('首页')
 
