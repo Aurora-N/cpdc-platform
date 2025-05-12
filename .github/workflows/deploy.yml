@@ -4,20 +4,20 @@ name: Deploy Vue 3 to GitHub Pages
 on:
   # 在推送到 main (或 master) 分支时触发
   push:
-    branches: [ main ]
+    branches: [main]
   # 允许您从 Actions 选项卡手动运行此工作流
   workflow_dispatch:
 
 # 设置 GITHUB_TOKEN 的权限以允许部署到 GitHub Pages
 permissions:
-  contents: write   # 允许工作流程向仓库中写入内容（包括推送分支）
+  contents: write # 允许工作流程向仓库中写入内容（包括推送分支）
   pages: write
   id-token: write
 
 # 只允许一个并发部署，跳过在进行中的运行之间排队的运行。
 # 但是，不要取消进行中的运行，因为我们希望允许这些生产部署完成。
 concurrency:
-  group: "pages"
+  group: 'pages'
   cancel-in-progress: false
 
 jobs:
@@ -39,6 +39,14 @@ jobs:
 
       - name: 构建项目
         run: npm run build
+
+      - name: 运行 Cypress E2E 测试
+        uses: cypress-io/github-action@v6
+        with:
+          start: npm run test:e2e
+          wait-on: 'http://localhost:4173'
+          wait-on-timeout: 60
+          browser: chrome
 
       - name: 部署到 gh-pages 分支
         uses: peaceiris/actions-gh-pages@v3
