@@ -43,7 +43,7 @@ jobs:
       - name: 运行 Cypress E2E 测试
         uses: cypress-io/github-action@v6
         with:
-          start: npm run test:e2e
+          start: npm run preview
           wait-on: 'http://localhost:4173'
           wait-on-timeout: 60
           browser: chrome
