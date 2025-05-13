@@ -1,12 +1,12 @@
 <template>
   <div class="flex flex-col items-center">
     <!-- 顶部占位区 -->
-    <div
-      class="h-100 bg-[url(/cpdc-platform/exhibition/2.png)] bg-center bg-cover flex flex-col justify-center items-center w-full"
-    >
-      <h1 class="text-4xl text-primary font-extrabold mb-8">{{ heroTitle }}</h1>
-      <span class="text-lg text-gray-800">{{ heroSubTitle }}</span>
-    </div>
+    <HeroComponent
+      :title="heroTitle"
+      :sub-title="heroSubTitle"
+      background-url="/cpdc-platform/exhibition/2.png"
+      title-color="primary"
+    />
     <!-- 藏品展示区 -->
     <main class="max-w-[1600px] pb-8 px-8 md:px-16 w-full">
       <!-- 索引条 -->
@@ -45,6 +45,7 @@
 <script setup lang="ts">
 import type { CollectionDataType } from '@/types/collection_data'
 import { ref } from 'vue'
+import HeroComponent from '@/components/Hero/HeroComponent.vue'
 import FilterButton from './components/FilterButton.vue'
 import SearchButton from './components/SearchButton.vue'
 
