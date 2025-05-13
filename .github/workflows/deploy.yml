@@ -41,12 +41,7 @@ jobs:
         run: npm run build
 
       - name: 运行 Cypress E2E 测试
-        uses: cypress-io/github-action@v6
-        with:
-          start: npm run test:e2e
-          wait-on: 'http://localhost:4173/cpdc-platform/'
-          wait-on-timeout: 60
-          browser: chrome
+        run: npm run test:e2e
 
       - name: 部署到 gh-pages 分支
         uses: peaceiris/actions-gh-pages@v3
