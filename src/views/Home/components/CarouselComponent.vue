@@ -31,7 +31,7 @@
       :class="{ 'opacity-0': !isHovering, 'opacity-100': isHovering }"
       aria-label="上一张"
     >
-      <ArrowLeft />
+      <ArrowLeft class="w-[24px]" />
     </button>
 
     <button
@@ -40,7 +40,7 @@
       :class="{ 'opacity-0': !isHovering, 'opacity-100': isHovering }"
       aria-label="下一张"
     >
-      <ArrowRight />
+      <ArrowRight class="w-[24px]" />
     </button>
 
     <!-- 底部指示器 -->

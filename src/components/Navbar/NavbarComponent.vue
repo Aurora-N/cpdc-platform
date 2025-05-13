@@ -61,12 +61,15 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import router from '@/router/index'
+import { useRoute } from 'vue-router'
 import type { NavItemType } from '@/types/ui'
 import ArrowDown from '@/components/icons/ArrowDown.vue'
 import NavMenu from '@/components/icons/NavMenu.vue'
 import NavMenuClose from '@/components/icons/NavMenuClose.vue'
+
+const route = useRoute()
 
 const selectedItem = ref<string>('首页')
 
@@ -100,6 +103,10 @@ const setActiveItem = (item: NavItemType) => {
 
 // 移动端菜单
 const isMobileMenuOpen = ref(false)
+
+onMounted(() => {
+  if (route.name) selectedItem.value = route.name.toString()
+})
 </script>
 
 <style scoped>
