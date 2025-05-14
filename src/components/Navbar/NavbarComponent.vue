@@ -14,7 +14,7 @@
       <div
         v-for="item of navItem"
         class="text-xl text-primary-100 px-4 py-2 flex items-center justify-center rounded-sm mr-2 last:mr-0 hover:text-white hover:bg-primary-200 ease-in-out duration-200"
-        :class="selectedItem === item.name ? 'text-white bg-primary-500' : ''"
+        :class="selectedItemLink === item.link ? 'text-white bg-primary-500' : ''"
         :key="item.name"
         :title="`前往${item.name}页面`"
         @click="setActiveItem(item)"
@@ -47,7 +47,7 @@
         <div
           v-for="item of navItem"
           class="text-md text-primary-100 px-3 md:px-5 py-2 flex items-center justify-between"
-          :class="selectedItem === item.name ? 'text-white bg-primary-300/50' : ''"
+          :class="selectedItemLink === item.link ? 'text-white bg-primary-300/50' : ''"
           :key="item.name"
           :title="`前往${item.name}页面`"
           @click="setActiveItem(item)"
@@ -71,7 +71,7 @@ import NavMenuClose from '@/components/icons/NavMenuClose.vue'
 
 const route = useRoute()
 
-const selectedItem = ref<string>('首页')
+const selectedItemLink = ref<string>('/')
 
 const navItem: NavItemType[] = [
   {
@@ -96,7 +96,7 @@ const navItem: NavItemType[] = [
 ]
 
 const setActiveItem = (item: NavItemType) => {
-  selectedItem.value = item.name
+  selectedItemLink.value = item.link
   router.push(item.link)
   isMobileMenuOpen.value = false
 }
@@ -105,7 +105,11 @@ const setActiveItem = (item: NavItemType) => {
 const isMobileMenuOpen = ref(false)
 
 onMounted(() => {
-  if (route.name) selectedItem.value = route.name.toString()
+  router.isReady().then(() => {
+    const currentPath = route.path
+    console.log(currentPath)
+    selectedItemLink.value = currentPath
+  })
 })
 </script>
 
