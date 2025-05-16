@@ -40,15 +40,17 @@ jobs:
           cache: 'pnpm'
           cache-dependency-path: ./pnpm-lock.yaml
 
+      - name: 安装依赖
+        run: pnpm install
+
+      - name: 安装 Cypress 二进制文件
+        run: npx cypress install
+
       - name: 缓存 Cypress 二进制文件
         uses: actions/cache@v3
         with:
-          # 使用 lockfile 的 hash 保证 lockfile 变动时才重装
           key: ${{ runner.os }}-cypress-${{ hashFiles('**/pnpm-lock.yaml') }}
           path: /home/runner/.cache/Cypress
-
-      - name: 安装依赖
-        run: pnpm install
 
       - name: 构建项目
         run: pnpm build
