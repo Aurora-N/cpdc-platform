@@ -28,22 +28,36 @@ jobs:
       - name: Checkout 代码
         uses: actions/checkout@v4
 
+      - name: 安装 pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: '10'
+
       - name: 设置 Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '22'
-          cache: 'npm'
+          cache: 'pnpm'
+          cache-dependency-path: ./pnpm-lock.yaml
+
+      - name: 缓存 Cypress 二进制文件
+        uses: actions/cache@v3
+        with:
+          # 使用 lockfile 的 hash 保证 lockfile 变动时才重装
+          key: ${{ runner.os }}-cypress-${{ hashFiles('**/pnpm-lock.yaml') }}
+          path: /home/runner/.cache/Cypress
 
       - name: 安装依赖
-        run: npm install
+        run: pnpm install
 
       - name: 构建项目
-        run: npm run build
+        run: pnpm build
 
       - name: 运行 Cypress E2E 测试
         uses: cypress-io/github-action@v6
         with:
-          start: npm run preview
+          build: pnpm build
+          start: pnpm preview
           wait-on: 'http://localhost:4173'
           wait-on-timeout: 60
           browser: chrome
