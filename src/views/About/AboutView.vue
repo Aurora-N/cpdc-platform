@@ -7,12 +7,12 @@
       title-color="white"
     />
     <!-- 藏品展示区 -->
-    <main class="max-w-[1600px] pb-8 px-8 md:px-16 w-full">
+    <main class="w-full max-w-[1600px] px-8 pb-8 md:px-16">
       <!-- 索引条 -->
       <div class="flex justify-between py-8">
         <div class="flex gap-6">
           <div
-            class="bg-primary text-white w-[8rem] px-1 text-lg flex py-1 justify-center items-center"
+            class="bg-primary flex w-[8rem] items-center justify-center px-1 py-1 text-lg text-white"
           >
             <span class="w-4/5 text-center">社区讨论</span>
           </div>
@@ -22,26 +22,26 @@
       <!-- 瓷器展示 -->
       <div class="flex flex-wrap gap-4">
         <div
-          class="w-full mb-4 border-1 border-white hover:border-primary duration-200 flex"
+          class="hover:border-primary mb-4 flex w-full border-1 border-white duration-200"
           v-for="(collection, index) of collectionsList"
           :key="index"
         >
-          <div class="w-80 h-80 overflow-hidden flex justify-center items-center">
+          <div class="flex h-80 w-80 items-center justify-center overflow-hidden">
             <img
-              class="object-cover w-full h-full"
+              class="h-full w-full object-cover"
               :src="collection.img.src"
               :alt="collection.img.alt"
             />
           </div>
-          <div class="p-4 ml-3 w-4/5">
-            <div class="flex mb-2">
+          <div class="ml-3 w-4/5 p-4">
+            <div class="mb-2 flex">
               <h2 class="text-2xl font-bold">{{ collection.name }}</h2>
-              <span class="bg-primary text-white flex justify-center items-center px-2 ml-4">{{
+              <span class="bg-primary ml-4 flex items-center justify-center px-2 text-white">{{
                 collection.during
               }}</span>
             </div>
-            <div class="text-primary text-xl mb-4">{{ collection.attribute }}</div>
-            <div class="text-gray-600 text-lg">{{ collection.description }}</div>
+            <div class="text-primary mb-4 text-xl">{{ collection.attribute }}</div>
+            <div class="text-lg text-gray-600">{{ collection.description }}</div>
           </div>
         </div>
       </div>

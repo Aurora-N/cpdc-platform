@@ -1,9 +1,9 @@
 <template>
-  <div class="flex flex-col items-center background">
+  <div class="background flex flex-col items-center">
     <!-- 顶部占位区 -->
     <HeroComponent background-url="/cpdc-platform/collections/banner.png" title-color="primary" />
     <!-- 藏品展示区 -->
-    <main class="max-w-[1600px] min-h-[80vh] pb-8 px-4 md:px-8 lg:px-16 w-full back">
+    <main class="back min-h-[80vh] w-full max-w-[1600px] px-4 pb-8 md:px-8 lg:px-16">
       <!-- 索引条 -->
       <div class="flex justify-between py-4 md:py-8">
         <div class="flex gap-3 md:gap-6">
@@ -16,18 +16,18 @@
       <!-- 瓷器展示 -->
       <div class="flex flex-wrap gap-4">
         <div
-          class="w-full md:w-[calc((100%-1rem)/2)] lg:w-[calc((100%-2rem)/3)] cursor-pointer"
+          class="w-full cursor-pointer md:w-[calc((100%-1rem)/2)] lg:w-[calc((100%-2rem)/3)]"
           v-for="(collection, index) of collectionsList"
           :key="index"
           @click="goToDetail(collection.id)"
         >
           <div
-            class="w-full h-70 overflow-hidden flex justify-center items-center bg-secondary rounded-md"
+            class="bg-secondary flex h-70 w-full items-center justify-center overflow-hidden rounded-md"
           >
-            <img class="object-cover h-full" :src="collection.image" :alt="collection.imageAlt" />
+            <img class="h-full object-cover" :src="collection.image" :alt="collection.imageAlt" />
           </div>
           <div class="py-3">
-            <h2 class="text-primary text-xl font-bold mb-1">{{ collection.name }}</h2>
+            <h2 class="text-primary mb-1 text-xl font-bold">{{ collection.name }}</h2>
             <div class="text-secondary-600 text-md">{{ collection.title }}</div>
           </div>
         </div>

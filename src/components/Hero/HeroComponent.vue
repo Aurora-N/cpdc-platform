@@ -1,6 +1,6 @@
 <template>
   <div
-    class="h-80 bg-center bg-cover flex flex-col justify-center items-center w-full bg-gray-200"
+    class="flex h-80 w-full flex-col items-center justify-center bg-gray-200 bg-cover bg-center"
     :style="props.backgroundUrl ? `background-image: url(${backgroundUrl})` : ''"
   >
     <h1
@@ -9,7 +9,7 @@
     >
       {{ props.title }}
     </h1>
-    <span v-if="props.subTitle" class="text-lg text-gray-800 mt-8">{{ props.subTitle }}</span>
+    <span v-if="props.subTitle" class="mt-8 text-lg text-gray-800">{{ props.subTitle }}</span>
   </div>
 </template>
 

@@ -11,18 +11,18 @@
 export function getAssetPath(path: string): string {
   // 确保路径以 / 开头
   const normalizedPath = path.startsWith('/') ? path : `/${path}`
-  
+
   // 在开发环境中，base 通常是 '/'，在生产环境中是实际的 base 路径
   const basePath = __BASE_PATH__ || '/'
-  
+
   // 如果 basePath 是 '/'，直接返回路径
   if (basePath === '/') {
     return normalizedPath
   }
-  
+
   // 移除 basePath 末尾的 '/' 以避免双斜杠
   const cleanBasePath = basePath.endsWith('/') ? basePath.slice(0, -1) : basePath
-  
+
   return `${cleanBasePath}${normalizedPath}`
 }
 
