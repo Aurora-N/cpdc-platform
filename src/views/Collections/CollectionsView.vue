@@ -43,7 +43,7 @@ import SearchBar from './components/SearchBar.vue'
 import { getExhibitions } from '@/apis/exhibitionApi'
 import { onMounted, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
-import type { ExhibitionsRecord } from '@/types/api'
+import type { ExhibitionsRecord } from '@/types/api.type'
 import type { FilterItemType } from './components/FilterButton.vue'
 
 const router = useRouter()
