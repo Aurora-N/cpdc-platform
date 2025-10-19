@@ -77,6 +77,18 @@ jobs:
       - name: Checkout 代码
         uses: actions/checkout@v4
 
+      - name: 安装 pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: '10'
+
+      - name: 设置 Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'pnpm'
+          cache-dependency-path: ./pnpm-lock.yaml
+
       - name: 下载依赖
         run: pnpm install
 
