@@ -1,5 +1,5 @@
 <template>
-  <main class="w-full px-12 py-12 flex justify-between items-center">
+  <main class="flex w-full items-center justify-between px-12 py-12">
     <!-- 左侧展厅 -->
     <SmallExhibitionComponent
       :data="leftExhibition"

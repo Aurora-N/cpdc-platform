@@ -1,13 +1,13 @@
 <template>
-  <div class="w-full h-full relative">
+  <div class="relative h-full w-full">
     <!-- 全景图容器 -->
-    <div class="w-full h-full" id="viewer">
+    <div class="h-full w-full" id="viewer">
       <!-- 信息面板 -->
       <div
         id="infoPanel"
-        class="absolute top-5 left-5 bg-black/50 text-white p-4 rounded-md text-[12px] z-[999] max-w-[300px]"
+        class="absolute top-5 left-5 z-[999] max-w-[300px] rounded-md bg-black/50 p-4 text-[12px] text-white"
       >
-        <h3 class="mb-2.5 text-primary text-xl">📍 操作指南</h3>
+        <h3 class="text-primary mb-2.5 text-xl">📍 操作指南</h3>
         <p class="my-1.5 text-[13px] leading-snug">• 拖拽旋转视角</p>
         <p class="my-1.5 text-[13px] leading-snug">• 滚轮缩放</p>
         <p class="my-1.5 text-[13px] leading-snug">• 点击热点查看详情</p>
@@ -16,7 +16,7 @@
           <p class="my-1.5 text-[13px] leading-snug"><strong>调试模式：</strong></p>
           <p class="my-1.5 text-[13px] leading-snug">• 点击任意位置获取坐标</p>
           <p class="my-1.5 text-[13px] leading-snug">• 复制的代码可直接用于热点配置</p>
-          <p class="text-[11px] text-[#aaa] mt-2.5">
+          <p class="mt-2.5 text-[11px] text-[#aaa]">
             💡 <strong>坐标说明：</strong><br />
             • yaw: 水平角度 (-180° 到 180°)<br />
             • pitch: 垂直角度 (-90° 到 90°)<br />
@@ -29,20 +29,20 @@
       <div
         v-if="props.debugMode"
         id="debugPanel"
-        class="absolute top-5 right-5 bg-black/80 text-white p-4 rounded-md z-[1000] max-w-[300px] text-[14px]"
+        class="absolute top-5 right-5 z-[1000] max-w-[300px] rounded-md bg-black/80 p-4 text-[14px] text-white"
       >
         <div id="coordinateInfo" class="mt-2.5" v-if="debugMode">
-          <div class="font-bold mb-2">点击位置坐标：</div>
+          <div class="mb-2 font-bold">点击位置坐标：</div>
           <div id="coordinateList"></div>
           <button
             id="clearCoordinates"
-            class="bg-[#e67e22] text-white border-none py-2 px-3.5 rounded-md cursor-pointer mt-2.5 w-full hover:bg-[#d35400]"
+            class="mt-2.5 w-full cursor-pointer rounded-md border-none bg-[#e67e22] px-3.5 py-2 text-white hover:bg-[#d35400]"
           >
             清空坐标
           </button>
           <button
             id="copyMarkersData"
-            class="bg-[#3498db] text-white border-none py-2 px-3.5 rounded-md cursor-pointer mt-2.5 w-full hover:bg-[#2980b9]"
+            class="mt-2.5 w-full cursor-pointer rounded-md border-none bg-[#3498db] px-3.5 py-2 text-white hover:bg-[#2980b9]"
           >
             复制热点数据
           </button>
@@ -51,7 +51,7 @@
 
       <!-- 状态指示器 -->
       <div
-        class="absolute bottom-5 left-5 bg-black/80 text-white p-2.5 rounded-md text-[12px] z-[999]"
+        class="absolute bottom-5 left-5 z-[999] rounded-md bg-black/80 p-2.5 text-[12px] text-white"
         id="statusIndicator"
       >
         正在加载...

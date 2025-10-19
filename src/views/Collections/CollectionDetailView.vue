@@ -1,33 +1,33 @@
 <template>
   <div class="collection-detail-view background">
-    <div v-if="collectionDetail" class="max-w-[1200px] mx-auto py-8 px-4 md:px-8">
-      <h1 class="text-3xl md:text-4xl font-bold mb-4 text-primary">{{ collectionDetail.name }}</h1>
+    <div v-if="collectionDetail" class="mx-auto max-w-[1200px] px-4 py-8 md:px-8">
+      <h1 class="text-primary mb-4 text-3xl font-bold md:text-4xl">{{ collectionDetail.name }}</h1>
 
       <div class="flex flex-col md:flex-row md:gap-8">
-        <div class="md:w-1/2 mb-4 md:mb-0">
+        <div class="mb-4 md:mb-0 md:w-1/2">
           <img
             :src="collectionDetail.image"
             :alt="collectionDetail.imageAlt"
-            class="w-full h-auto object-cover rounded-md shadow-lg"
+            class="h-auto w-full rounded-md object-cover shadow-lg"
           />
         </div>
-        <div class="md:w-1/2 bg-white p-6 rounded-md shadow-md">
-          <p class="text-lg md:text-xl mb-2 text-secondary-700">
+        <div class="rounded-md bg-white p-6 shadow-md md:w-1/2">
+          <p class="text-secondary-700 mb-2 text-lg md:text-xl">
             <strong>属性:</strong> {{ collectionDetail.attribute }}
           </p>
-          <p class="text-lg md:text-xl mb-2 text-secondary-700">
+          <p class="text-secondary-700 mb-2 text-lg md:text-xl">
             <strong>时期:</strong> {{ collectionDetail.during }}
           </p>
-          <p class="text-lg md:text-xl mb-4 leading-relaxed text-secondary-800 whitespace-pre-wrap">
+          <p class="text-secondary-800 mb-4 text-lg leading-relaxed whitespace-pre-wrap md:text-xl">
             <strong>描述:</strong> {{ collectionDetail.content }}
           </p>
-          <router-link to="/collections" class="text-primary hover:underline font-medium"
+          <router-link to="/collections" class="text-primary font-medium hover:underline"
             >&#x2190; 返回藏品列表</router-link
           >
         </div>
       </div>
     </div>
-    <div v-else class="text-center py-8 text-xl text-gray-500">加载中... 或未找到瓷器信息。</div>
+    <div v-else class="py-8 text-center text-xl text-gray-500">加载中... 或未找到瓷器信息。</div>
   </div>
 </template>
 

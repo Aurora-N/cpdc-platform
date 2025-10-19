@@ -8,7 +8,7 @@
       viewBox="0 0 1440 61"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
-      class="w-full h-auto"
+      class="h-auto w-full"
       preserveAspectRatio="xMidYMid meet"
     >
       <path
@@ -26,7 +26,7 @@
       src="@/assets/historyGalleryPaths/ClickableCircle.svg"
       :class="
         cn(
-          'absolute cursor-pointer w-4 h-4 md:w-5 md:h-5 lg:w-6 lg:h-6 -translate-x-1/2 -translate-y-1/2 hover:scale-125 transition-transform select-none ',
+          'absolute h-4 w-4 -translate-x-1/2 -translate-y-1/2 cursor-pointer transition-transform select-none hover:scale-125 md:h-5 md:w-5 lg:h-6 lg:w-6',
           i === activeIndex ? 'scale-0' : 'scale-100',
         )
       "
@@ -37,7 +37,7 @@
     <!-- 激活状态的实心圆点 -->
     <div
       v-show="activeIndex >= 0 && activeIndex < points.length"
-      class="absolute w-3 h-3 md:w-4 md:h-4 lg:w-5 lg:h-5 -translate-x-1/2 -translate-y-1/2 rounded-4xl select-none"
+      class="absolute h-3 w-3 -translate-x-1/2 -translate-y-1/2 rounded-4xl select-none md:h-4 md:w-4 lg:h-5 lg:w-5"
       :style="{
         left: `${points[activeIndex]?.x}%`,
         top: `${points[activeIndex]?.y}%`,
@@ -49,7 +49,7 @@
     <img
       ref="focusCircle"
       :src="currentFocusImage"
-      class="absolute w-8 h-8 md:w-10 md:h-10 -translate-x-1/2 -translate-y-1/2 scale-150 sm:scale-200 md:scale-250 select-none"
+      class="absolute h-8 w-8 -translate-x-1/2 -translate-y-1/2 scale-150 select-none sm:scale-200 md:h-10 md:w-10 md:scale-250"
     />
   </div>
 </template>

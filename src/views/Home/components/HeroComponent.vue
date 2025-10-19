@@ -1,19 +1,19 @@
 <template>
-  <div class="flex flex-col items-center hero-background">
+  <div class="hero-background flex flex-col items-center">
     <!-- 背景图片 -->
     <!-- 顶部banner -->
     <div class="my-12 flex flex-col items-center">
-      <h1 class="text-2xl font-bold text-primary-400 mb-4">七十二道笔触，三百年釉上春秋</h1>
+      <h1 class="text-primary-400 mb-4 text-2xl font-bold">七十二道笔触，三百年釉上春秋</h1>
       <span class="text-primary-400"
         >“从景德白胎到织金彩瓷，每一道金线都是时光的引脚，每一次窑变都是岭南的呼吸”</span
       >
     </div>
     <!-- 中部流程 -->
-    <div class="grid grid-cols-7 gap-5 max-w-[1280px] mx-10">
+    <div class="mx-10 grid max-w-[1280px] grid-cols-7 gap-5">
       <div class="flex flex-col" v-for="showItem of showItems" :key="showItem.alt">
         <img class="mb-4" :src="showItem.src" :alt="showItem.alt" />
         <div
-          class="bg-primary-200 text-white flex justify-center items-center text-sm md:text-md lg:text-lg font-bold py-1 px-2 md:px-3 lg:px-5 mx-auto"
+          class="bg-primary-200 md:text-md mx-auto flex items-center justify-center px-2 py-1 text-sm font-bold text-white md:px-3 lg:px-5 lg:text-lg"
         >
           {{ showItem.alt }}
         </div>
@@ -21,8 +21,8 @@
     </div>
     <!-- 底部文本 -->
     <div class="mt-18 mb-5 flex flex-col items-center">
-      <div class="text-xl font-bold text-white bg-primary mb-5 py-2.5 px-4">广彩历史长廊</div>
-      <div class="flex flex-col items-center text-primary-400 gap-1">
+      <div class="bg-primary mb-5 px-4 py-2.5 text-xl font-bold text-white">广彩历史长廊</div>
+      <div class="text-primary-400 flex flex-col items-center gap-1">
         <span>当清代匠人的毛笔点染出第一朵岭南牡丹</span>
         <span>时光便为瓷器镀上包浆</span>
         <span>此刻，我们以数字针脚修补历史的经纬，邀您共织广彩记忆</span>
