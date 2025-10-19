@@ -55,6 +55,9 @@ jobs:
       - name: 构建项目
         run: pnpm build
 
+      - name: 运行 ESLint 检测
+        run: pnpm lint
+
       - name: 运行 Cypress E2E 测试
         uses: cypress-io/github-action@v6
         with:

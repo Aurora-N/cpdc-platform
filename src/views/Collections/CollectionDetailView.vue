@@ -35,7 +35,7 @@
 import { ref, onMounted, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { getExhibitionDetail } from '@/apis/exhibitionApi'
-import type { ExhibitionDetailData } from '@/types/api'
+import type { ExhibitionDetailData } from '@/types/api.type'
 
 const route = useRoute()
 const collectionDetail = ref<ExhibitionDetailData | null>(null)

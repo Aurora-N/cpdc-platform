@@ -23,26 +23,24 @@ export interface VrHallRecord {
   image: string
 }
 
-
 // 获取展厅热点数据
 export interface VrHallDetailResponse {
-  code: number;
-  data: VrHallDetailData[];
-  message: string;
+  code: number
+  data: VrHallDetailData[]
+  message: string
 }
 
 export interface VrHallDetailData {
   /**
- * 全景图
- */
-  id: number;
-  exhibitionId: number;
-  url: string;
-  image: string;
-  pitch: number;
-  yaw: number;
+   * 全景图
+   */
+  id: number
+  exhibitionId: number
+  url: string
+  image: string
+  pitch: number
+  yaw: number
 }
-
 
 // 获取展品响应
 export interface ExhibitionsResponse {
