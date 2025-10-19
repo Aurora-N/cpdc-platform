@@ -5,14 +5,14 @@
     :autoplayInterval="4000"
     :swipeThreshold="50"
   />
-  <HeroComponent />
-  <TripIntroComponent />
+  <main class="hero-background">
+    <HistoryGallery />
+  </main>
 </template>
 
 <script setup lang="ts">
 import CarouselComponent from '@/views/Home/components/CarouselComponent.vue'
-import HeroComponent from './components/HeroComponent.vue'
-import TripIntroComponent from './components/TripIntroComponent.vue'
+import HistoryGallery from './components/HistoryGallery.vue'
 
 const images = [
   {
@@ -29,3 +29,15 @@ const images = [
   },
 ]
 </script>
+
+<style scoped>
+.hero-background {
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.8)),
+    url('/cpdc-platform/herobg.png');
+
+  background-size: cover;
+  background-position: center;
+  overflow: hidden;
+}
+</style>
