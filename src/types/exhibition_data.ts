@@ -1,4 +1,4 @@
-import type { ImageType } from "./ui";
+import type { ImageType } from './ui'
 
 export interface ExhibitionDataType {
   name: string
@@ -15,5 +15,10 @@ export interface ExhibitionDataType {
  * SixthStage (6,"当代")
  */
 export enum During {
-  FirstStage = 1, SecondStage, ThirdStage, ForthStage, FifthStage, SixthStage
+  FirstStage = 1,
+  SecondStage,
+  ThirdStage,
+  ForthStage,
+  FifthStage,
+  SixthStage,
 }

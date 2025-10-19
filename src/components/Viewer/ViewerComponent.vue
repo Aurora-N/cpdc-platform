@@ -65,7 +65,7 @@ import { Viewer } from '@photo-sphere-viewer/core'
 import { MarkersPlugin, type MarkerConfig } from '@photo-sphere-viewer/markers-plugin'
 import { onMounted, ref } from 'vue'
 import { getVrHallDetail, getExhibitionDetail } from '@/apis/exhibitionApi'
-import type { VrHallDetailData, ExhibitionDetailData } from '@/types/api'
+import type { VrHallDetailData, ExhibitionDetailData } from '@/types/api.type'
 
 declare global {
   interface Window {
