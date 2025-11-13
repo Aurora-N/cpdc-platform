@@ -22,7 +22,7 @@ export default defineConfig({
     proxy: {
       // 匹配 /api 开头的请求
       '/api': {
-        target: 'https://included-asp-known.ngrok-free.app', // 你的后端地址
+        target: 'http://localhost:8080', // 你的后端地址
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api/, '') // 去掉 /api 前缀
       }

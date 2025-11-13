@@ -93,7 +93,7 @@ const props = defineProps({
   },
   debugMode: {
     type: Boolean,
-    default: false,
+    default: true,
   },
 })
 
@@ -443,12 +443,12 @@ onMounted(async () => {
   try {
     updateStatus('正在加载展厅热点数据...')
     const vrHallDetailRes = await getVrHallDetail(props.id || 1)
-    
+
     // 确保数据存在且格式正确
     if (!vrHallDetailRes.data?.records || !Array.isArray(vrHallDetailRes.data.records)) {
       throw new Error('热点数据格式不正确')
     }
-    
+
     const hotSpotData = vrHallDetailRes.data.records
 
     // 记录热点数量
@@ -456,7 +456,7 @@ onMounted(async () => {
 
     const markerPromises = hotSpotData.map(async (hotspot) => {
       let exhibitionDetail: ExhibitionDetailData | null = null
-      
+
       if (hotspot.exhibitionId) {
         try {
           const exhibitRes = await getExhibitionDetail(hotspot.exhibitionId)
@@ -473,9 +473,9 @@ onMounted(async () => {
 
       return {
         id: `marker-${hotspot.id}`,
-        position: { 
+        position: {
           yaw: hotspot.yaw || 0,  // 提供默认值
-          pitch: hotspot.pitch || 0 
+          pitch: hotspot.pitch || 0
         },
         html: createHotspotElement(false).outerHTML,
         tooltip: exhibitionDetail?.name || '展品热点',
