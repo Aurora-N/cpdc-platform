@@ -1,13 +1,15 @@
 <template>
-  <div class="flex flex-col">
+  <div class="flex flex-col" ref="rootEl">
     <div
       class="bg-primary text-white w-[5rem] md:w-[8rem] text-md md:text-lg flex p-0.5 md:p-1 justify-center items-center hover:bg-primary-600 select-none cursor-pointer"
       @click="isListOpen = !isListOpen"
     >
       <span class="w-4/5 text-center">{{ props.name }}</span>
       <div v-if="items && items.length > 0">
-        <ArrowDown class="rotate-180" v-if="isListOpen" />
-        <ArrowDown v-else />
+        <ArrowDown
+          class="transition-transform duration-200 ease-out"
+          :class="{ 'rotate-180': isListOpen }"
+        />
       </div>
     </div>
 
@@ -36,7 +38,7 @@
 
 <script setup lang="ts">
 import ArrowDown from '@/components/icons/ArrowDown.vue'
-import { onMounted, ref } from 'vue'
+import { onMounted, onBeforeUnmount, ref } from 'vue'
 
 // 定义FilterItemType接口
 export interface FilterItemType {
@@ -46,6 +48,7 @@ export interface FilterItemType {
 }
 
 const isListOpen = ref(false)
+const rootEl = ref<HTMLElement | null>(null)
 
 const activeItemName = ref('')
 const activeItemValue = ref<string | number | undefined>('')
@@ -66,10 +69,42 @@ defineExpose({
   activeItemValue,
 })
 
+const onBodyClick = (e: MouseEvent) => {
+  const target = e.target as Node
+  if (isListOpen.value && rootEl.value && !rootEl.value.contains(target)) {
+    isListOpen.value = false
+  }
+}
+
 onMounted(() => {
   if (props.items && props.items.length > 0) {
     activeItemName.value = props.items[0].name
     activeItemValue.value = props.items[0].value
   }
+  document.addEventListener('click', onBodyClick, true)
+})
+
+onBeforeUnmount(() => {
+  document.removeEventListener('click', onBodyClick, true)
 })
 </script>
+
+<style scoped>
+.slide-down-enter-active,
+.slide-down-leave-active {
+  transition: transform 0.18s cubic-bezier(0.2, 0, 0, 1), opacity 0.18s cubic-bezier(0.2, 0, 0, 1);
+  will-change: transform, opacity;
+}
+
+.slide-down-enter-from,
+.slide-down-leave-to {
+  opacity: 0;
+  transform: translateY(-8px) scaleY(0.98);
+}
+
+.slide-down-enter-to,
+.slide-down-leave-from {
+  opacity: 1;
+  transform: translateY(0) scaleY(1);
+}
+</style>
