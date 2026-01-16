@@ -1,4 +1,5 @@
 import axios from "axios";
+import router from "@/router";
 
 // axios实例
 const apiClient = axios.create({
@@ -13,7 +14,18 @@ const apiClient = axios.create({
 // 拦截器
 // axios请求拦截器
 apiClient.interceptors.request.use(
-  // TODO: 拼接token
+  (config) => {
+    // 从 localStorage 获取 token
+    const token = localStorage.getItem('token')
+    if (token) {
+      // 添加 token 到请求头
+      config.headers['token'] = token
+    }
+    return config
+  },
+  (error) => {
+    return Promise.reject(error)
+  }
 )
 
 // axios响应式拦截器
@@ -33,7 +45,16 @@ apiClient.interceptors.response.use(
           break;
         case 401:
           message = '未授权，请重新登录';
-          // 在这里可以执行跳转到登录页等操作
+          // 清除本地存储的用户信息
+          localStorage.removeItem('token')
+          localStorage.removeItem('userId')
+          localStorage.removeItem('userName')
+          // 跳转到登录页，并保存当前路径
+          const currentPath = router.currentRoute.value.fullPath
+          router.push({
+            path: '/login',
+            query: { redirect: currentPath }
+          })
           break;
         case 403:
           message = '禁止访问';
@@ -54,6 +75,7 @@ apiClient.interceptors.response.use(
     }
 
     // 统一显示错误提示
+    console.error('API Error:', message)
 
     // 继续抛出错误，以便业务代码中的 .catch() 能捕获到
     return Promise.reject(e);

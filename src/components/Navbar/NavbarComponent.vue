@@ -24,13 +24,31 @@
         {{ item.name }}
         <ArrowDown class="text-2xl ml-1" v-if="item.subitems" />
       </div>
+      <!-- 用户图标 -->
+      <div
+        class="text-2xl text-primary-100 px-3 py-2 flex items-center justify-center rounded-sm hover:text-white hover:bg-primary-200 ease-in-out duration-200 cursor-pointer"
+        :title="userStore.isLoggedIn ? '个人中心' : '登录 / 注册'"
+        @click="handleUserIconClick"
+      >
+        <UserIcon />
+      </div>
     </div>
 
-    <!-- 移动端菜单按钮 -->
-    <div class="flex items-center lg:hidden" @click="isMobileMenuOpen = !isMobileMenuOpen">
+    <!-- 移动端菜单按钮和用户图标 -->
+    <div class="flex items-center gap-2 lg:hidden">
+      <!-- 移动端用户图标 -->
+      <div
+        class="text-2xl text-primary-100 p-1 flex items-center justify-center cursor-pointer"
+        :title="userStore.isLoggedIn ? '个人中心' : '登录 / 注册'"
+        @click="handleUserIconClick"
+      >
+        <UserIcon />
+      </div>
+      <!-- 移动端菜单按钮 -->
       <button
         class="text-xl text-primary-100 p-1 flex items-center justify-center"
         title="打开主菜单"
+        @click="isMobileMenuOpen = !isMobileMenuOpen"
       >
         <span class="sr-only">打开主菜单</span>
         <NavMenu v-if="!isMobileMenuOpen" />
@@ -70,8 +88,11 @@ import type { NavItemType } from '@/types/ui'
 import ArrowDown from '@/components/icons/ArrowDown.vue'
 import NavMenu from '@/components/icons/NavMenu.vue'
 import NavMenuClose from '@/components/icons/NavMenuClose.vue'
+import UserIcon from '@/components/icons/UserIcon.vue'
+import { useUserStore } from '@/stores/userStore'
 
 const route = useRoute()
+const userStore = useUserStore()
 
 const selectedItemLink = ref<string>('/')
 
@@ -105,6 +126,21 @@ const setActiveItem = (item: NavItemType) => {
 
 // 移动端菜单
 const isMobileMenuOpen = ref(false)
+
+// 处理用户图标点击
+const handleUserIconClick = () => {
+  if (userStore.isLoggedIn) {
+    // 已登录，跳转到个人信息页面
+    router.push('/profile')
+  } else {
+    // 未登录，跳转到登录页面，并保存当前路径
+    router.push({
+      path: '/login',
+      query: { redirect: route.fullPath }
+    })
+  }
+  isMobileMenuOpen.value = false
+}
 
 onMounted(() => {
   router.isReady().then(() => {
