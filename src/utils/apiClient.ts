@@ -45,16 +45,36 @@ apiClient.interceptors.response.use(
           break;
         case 401:
           message = '未授权，请重新登录';
-          // 清除本地存储的用户信息
+          // 清除用户信息
+          try {
+            // 动态导入 userStore，避免循环依赖
+            import('@/stores/userStore').then(({ useUserStore }) => {
+              const userStore = useUserStore()
+              userStore.clearUserInfo()
+            })
+          } catch (error) {
+            // 如果导入失败，直接清除 localStorage
+            console.error('清除用户状态失败:', error)
+          }
+          // 无论如何都清除 localStorage
           localStorage.removeItem('token')
           localStorage.removeItem('userId')
           localStorage.removeItem('userName')
+          
           // 跳转到登录页，并保存当前路径
           const currentPath = router.currentRoute.value.fullPath
-          router.push({
-            path: '/login',
-            query: { redirect: currentPath }
-          })
+          // 避免在登录页重复跳转
+          if (currentPath !== '/login') {
+            router.replace({
+              path: '/login',
+              query: { redirect: currentPath }
+            }).catch(err => {
+              // 忽略导航重复错误
+              if (err.name !== 'NavigationDuplicated') {
+                console.error('导航错误:', err)
+              }
+            })
+          }
           break;
         case 403:
           message = '禁止访问';

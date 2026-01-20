@@ -33,21 +33,14 @@
           <label for="userName" class="block text-sm font-medium text-white mb-2 ml-1">
             用户名
           </label>
-          <div class="relative">
-            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-              <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-              </svg>
-            </div>
-            <input
-              id="userName"
-              v-model="registerForm.userName"
-              type="text"
-              required
-              class="input-field pl-12"
-              placeholder="请输入用户名"
-            />
-          </div>
+          <input
+            id="userName"
+            v-model="registerForm.userName"
+            type="text"
+            required
+            class="input-field"
+            placeholder="请输入用户名"
+          />
         </div>
 
         <!-- 密码 -->
@@ -55,21 +48,14 @@
           <label for="password" class="block text-sm font-medium text-white mb-2 ml-1">
             密码
           </label>
-          <div class="relative">
-            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-              <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-              </svg>
-            </div>
-            <input
-              id="password"
-              v-model="registerForm.password"
-              type="password"
-              required
-              class="input-field pl-12"
-              placeholder="请输入密码（至少6位）"
-            />
-          </div>
+          <input
+            id="password"
+            v-model="registerForm.password"
+            type="password"
+            required
+            class="input-field"
+            placeholder="请输入密码（至少6位）"
+          />
         </div>
 
         <!-- 确认密码 -->
@@ -77,21 +63,14 @@
           <label for="confirmPassword" class="block text-sm font-medium text-white mb-2 ml-1">
             确认密码
           </label>
-          <div class="relative">
-            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-              <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-            </div>
-            <input
-              id="confirmPassword"
-              v-model="confirmPassword"
-              type="password"
-              required
-              class="input-field pl-12"
-              placeholder="请再次输入密码"
-            />
-          </div>
+          <input
+            id="confirmPassword"
+            v-model="confirmPassword"
+            type="password"
+            required
+            class="input-field"
+            placeholder="请再次输入密码"
+          />
         </div>
 
         <!-- 错误提示 -->

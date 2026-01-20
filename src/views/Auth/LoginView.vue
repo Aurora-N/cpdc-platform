@@ -2,7 +2,7 @@
   <div class="min-h-screen bg-cover bg-center flex items-center justify-center px-4 py-12 relative overflow-hidden" style="background-image: url('/introbg.png')">
     <!-- 装饰性背景元素 -->
     <div class="absolute inset-0 bg-gradient-to-br from-primary/30 via-transparent to-primary-600/20"></div>
-    
+
     <!-- 装饰性图案 -->
     <div class="absolute top-10 right-10 w-32 h-32 opacity-10">
       <div class="w-full h-full border-4 border-white rounded-full animate-pulse"></div>
@@ -33,21 +33,14 @@
           <label for="userName" class="block text-sm font-medium text-white mb-2 ml-1">
             用户名
           </label>
-          <div class="relative">
-            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-              <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-              </svg>
-            </div>
-            <input
-              id="userName"
-              v-model="loginForm.userName"
-              type="text"
-              required
-              class="input-field pl-12"
-              placeholder="请输入用户名"
-            />
-          </div>
+          <input
+            id="userName"
+            v-model="loginForm.userName"
+            type="text"
+            required
+            class="input-field"
+            placeholder="请输入用户名"
+          />
         </div>
 
         <!-- 密码 -->
@@ -55,21 +48,14 @@
           <label for="password" class="block text-sm font-medium text-white mb-2 ml-1">
             密码
           </label>
-          <div class="relative">
-            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-              <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-              </svg>
-            </div>
-            <input
-              id="password"
-              v-model="loginForm.password"
-              type="password"
-              required
-              class="input-field pl-12"
-              placeholder="请输入密码"
-            />
-          </div>
+          <input
+            id="password"
+            v-model="loginForm.password"
+            type="password"
+            required
+            class="input-field"
+            placeholder="请输入密码"
+          />
         </div>
 
         <!-- 错误提示 -->
@@ -177,7 +163,7 @@ const handleLogin = async () => {
   -webkit-backdrop-filter: blur(20px);
   border-radius: 24px;
   padding: 3rem;
-  box-shadow: 
+  box-shadow:
     0 20px 60px rgba(0, 0, 0, 0.3),
     0 0 0 1px rgba(255, 255, 255, 0.1),
     inset 0 1px 0 rgba(255, 255, 255, 0.2);
