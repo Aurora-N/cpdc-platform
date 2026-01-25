@@ -1,6 +1,7 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
 import HomeView from '@/views/Home/HomeView.vue'
-import AboutView from '@/views/About/AboutView.vue'
+import CommunityView from '@/views/Community/CommunityView.vue'
+import CommunityDetailView from '@/views/Community/CommunityDetailView.vue'
 import ExhibitionView from '@/views/Exhibition/ExhibitionView.vue'
 import CollectionsView from '@/views/Collections/CollectionsView.vue'
 import CollectionDetailView from '@/views/Collections/CollectionDetailView.vue'
@@ -19,9 +20,14 @@ const router = createRouter({
       component: HomeView,
     },
     {
-      path: '/about',
-      name: 'about',
-      component: AboutView,
+      path: '/community',
+      name: 'community',
+      component: CommunityView,
+    },
+    {
+      path: '/community/:id',
+      name: 'community-detail',
+      component: CommunityDetailView,
     },
     {
       path: '/collections',

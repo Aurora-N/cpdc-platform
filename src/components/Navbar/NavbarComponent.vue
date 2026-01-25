@@ -98,8 +98,8 @@ const selectedItemLink = ref<string>('/')
 
 const navItem: NavItemType[] = [
   {
-    name: '关于我们',
-    link: '/about',
+    name: '社区互动',
+    link: '/community',
     subitems: [],
   },
   {
