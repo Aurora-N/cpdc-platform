@@ -33,6 +33,17 @@
             @keyup.enter="handleSearch"
           />
 
+          <!-- 清除按钮 -->
+            <button
+              v-if="searchKeyword"
+              class="p-2 text-gray-400 hover:text-gray-600 transition-colors mr-1"
+              @click="clearSearch"
+            >
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+
           <!-- 搜索按钮 -->
           <button
             class="px-6 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-600 rounded-full transition-all font-medium text-sm hidden sm:block"
@@ -101,14 +112,15 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, watch } from 'vue'
+import { ref, onMounted } from 'vue'
 import HeroComponent from '@/components/Hero/HeroComponent.vue'
 import PostCard from './components/PostCard.vue'
 import Pagination from './components/Pagination.vue'
 import PostModal from './components/PostModal.vue'
 import SearchIcon from '@/components/icons/SearchIcon.vue'
 import { getPostList } from '@/apis/postApi'
-import type { Post, PageResult } from '@/types/post'
+import type { Post, PageQueryDTO } from '@/types/post'
+import { parseImages } from '@/utils/formatUtils'
 
 const posts = ref<Post[]>([])
 const loading = ref(false)
@@ -124,8 +136,8 @@ const pageSize = 5
 const fetchPosts = async () => {
   loading.value = true
   try {
-    const params: any = {
-      page: currentPage.value,
+    const params: PageQueryDTO = {
+      current: currentPage.value,
       size: pageSize,
     }
     if (searchKeyword.value.trim()) {
@@ -134,20 +146,14 @@ const fetchPosts = async () => {
     const response = await getPostList(params)
 
     if (response.code === 200 && response.data) {
-      const data = response.data as PageResult<Post>
+      const data = response.data
       posts.value = data.records || []
       totalPages.value = data.pages || 0
       total.value = data.total || 0
 
       // 处理图片字段（如果是字符串，转换为数组）
       posts.value = posts.value.map((post) => {
-        if (post.images && typeof post.images === 'string') {
-          try {
-            post.images = JSON.parse(post.images)
-          } catch {
-            post.images = post.images.split(',').filter(Boolean)
-          }
-        }
+        post.images = parseImages(post.images as unknown as string)
         return post
       })
     }
@@ -162,12 +168,19 @@ const fetchPosts = async () => {
 const handlePageChange = (page: number) => {
   currentPage.value = page
   window.scrollTo({ top: 0, behavior: 'smooth' })
+  fetchPosts()
 }
 
-// 处理搜索
+// 搜索
 const handleSearch = () => {
   currentPage.value = 1
   fetchPosts()
+}
+
+// 清除搜索
+const clearSearch = () => {
+  searchKeyword.value = ''
+  handleSearch()
 }
 
 // 处理点赞变化
@@ -185,11 +198,6 @@ const handlePostSuccess = () => {
   currentPage.value = 1
   fetchPosts()
 }
-
-// 监听页码变化
-watch(currentPage, () => {
-  fetchPosts()
-})
 
 onMounted(() => {
   fetchPosts()

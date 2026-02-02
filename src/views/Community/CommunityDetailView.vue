@@ -139,11 +139,7 @@
         </div>
 
         <!-- 评论列表 -->
-        <div v-if="repliesLoading" class="py-20 flex justify-center">
-          <div class="w-10 h-10 border-4 border-primary/20 border-t-primary rounded-full animate-spin"></div>
-        </div>
-
-        <div v-else-if="replies.length === 0" class="py-20 text-center bg-gray-50/50 rounded-3xl border border-dashed border-gray-200">
+        <div v-if="replies.length === 0 && !repliesLoading" class="py-20 text-center bg-gray-50/50 rounded-3xl border border-dashed border-gray-200">
           <div class="text-gray-400 mb-2 text-lg">暂无评论</div>
           <div class="text-gray-400 text-sm">快来抢沙发吧</div>
         </div>
@@ -158,23 +154,27 @@
           />
         </div>
 
-        <!-- 评论分页 -->
-        <div class="mt-12 flex justify-center">
-          <Pagination
-            v-if="replyTotalPages > 0"
-            :current-page="replyCurrentPage"
-            :total-pages="replyTotalPages"
-            :total="replyTotal"
-            @page-change="handleReplyPageChange"
-          />
+        <!-- 加载状态 -->
+        <div v-if="repliesLoading" class="py-12 flex justify-center">
+          <div class="w-10 h-10 border-4 border-primary/20 border-t-primary rounded-full animate-spin"></div>
+        </div>
+        
+        <div v-if="!hasMoreReplies && replies.length > 0" class="py-12 text-center text-gray-400 text-sm">
+          - 到底啦 -
         </div>
       </div>
     </main>
+    
+    <!-- 图片预览 -->
+    <ImagePreview
+      v-model:visible="previewVisible"
+      :image-url="previewImageUrl"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, computed, watch } from 'vue'
+import { ref, onMounted, computed, watch, onUnmounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import HeroComponent from '@/components/Hero/HeroComponent.vue'
 import ArrowLeft from '@/components/icons/ArrowLeft.vue'
@@ -183,24 +183,34 @@ import CommentIcon from '@/components/icons/CommentIcon.vue'
 import HeartIcon from '@/components/icons/HeartIcon.vue'
 import ReplyForm from './components/ReplyForm.vue'
 import ReplyItem from './components/ReplyItem.vue'
-import Pagination from './components/Pagination.vue'
+import ImagePreview from '@/components/ImagePreview.vue'
 import { getPostDetail, toggleLikePost, getReplyList } from '@/apis/postApi'
-import type { Post, Reply, PageResult } from '@/types/post'
+import type { Post, Reply } from '@/types/post'
+import { useUserStore } from '@/stores/userStore'
+import { parseImages, formatDate } from '@/utils/formatUtils'
 
 const route = useRoute()
 const router = useRouter()
+const userStore = useUserStore()
 
 const postId = computed(() => Number(route.params.id))
 const post = ref<Post | null>(null)
 const loading = ref(false)
+
+// 评论相关
 const replies = ref<Reply[]>([])
 const repliesLoading = ref(false)
 const replyCurrentPage = ref(1)
 const replyTotalPages = ref(0)
 const replyTotal = ref(0)
 const replyPageSize = 10
+const hasMoreReplies = computed(() => replyCurrentPage.value < replyTotalPages.value)
 
 const replyCount = computed(() => post.value?.replyCount || 0)
+
+// 图片预览
+const previewVisible = ref(false)
+const previewImageUrl = ref('')
 
 // 获取帖子详情
 const fetchPostDetail = async () => {
@@ -211,13 +221,7 @@ const fetchPostDetail = async () => {
       post.value = response.data
 
       // 处理图片字段
-      if (post.value.images && typeof post.value.images === 'string') {
-        try {
-          post.value.images = JSON.parse(post.value.images)
-        } catch {
-          post.value.images = post.value.images.split(',').filter(Boolean)
-        }
-      }
+      post.value.images = parseImages(post.value.images as unknown as string)
     }
   } catch (error) {
     console.error('获取帖子详情失败:', error)
@@ -226,35 +230,42 @@ const fetchPostDetail = async () => {
   }
 }
 
-// 获取评论列表
-const fetchReplies = async () => {
+// 获取评论列表 (一级评论)
+const fetchReplies = async (isLoadMore = false) => {
+  if (repliesLoading.value) return
+  
   repliesLoading.value = true
   try {
-    const response = await getReplyList(postId.value, {
-      page: replyCurrentPage.value,
+    const page = isLoadMore ? replyCurrentPage.value + 1 : 1
+    
+    // 获取一级评论
+    const response = await getReplyList({
+      postId: postId.value,
+      answerId: 0,
+      current: page,
       size: replyPageSize,
     })
 
     if (response.code === 200 && response.data) {
-      const data = response.data as PageResult<Reply>
-      replies.value = data.records || []
+      const data = response.data
+      let fetchedReplies = data.records || []
       replyTotalPages.value = data.pages || 0
       replyTotal.value = data.total || 0
+      
+      // 更新页码
+      replyCurrentPage.value = page
 
       // 处理图片字段
-      replies.value = replies.value.map((reply) => {
-        if (reply.images && typeof reply.images === 'string') {
-          try {
-            reply.images = JSON.parse(reply.images)
-          } catch {
-            reply.images = reply.images.split(',').filter(Boolean)
-          }
-        }
+      fetchedReplies = fetchedReplies.map((reply) => {
+        reply.images = parseImages(reply.images as unknown as string)
         return reply
       })
 
-      // 构建评论树形结构
-      buildReplyTree()
+      if (isLoadMore) {
+        replies.value = [...replies.value, ...fetchedReplies]
+      } else {
+        replies.value = fetchedReplies
+      }
     }
   } catch (error) {
     console.error('获取评论列表失败:', error)
@@ -263,79 +274,66 @@ const fetchReplies = async () => {
   }
 }
 
-// 构建评论树形结构
-const buildReplyTree = () => {
-  const replyMap = new Map<number, Reply>()
-  const rootReplies: Reply[] = []
-
-  // 先创建所有评论的映射
-  replies.value.forEach((reply) => {
-    reply.children = []
-    replyMap.set(reply.id, reply)
-  })
-
-  // 构建树形结构
-  replies.value.forEach((reply) => {
-    if (reply.answerId === 0) {
-      // 顶级评论
-      rootReplies.push(reply)
-    } else {
-      // 子评论
-      const parent = replyMap.get(reply.answerId)
-      if (parent) {
-        if (!parent.children) {
-          parent.children = []
-        }
-        parent.children.push(reply)
-      }
-    }
-  })
-
-  replies.value = rootReplies
+// 滚动监听 (无限加载)
+const handleScroll = () => {
+  if (repliesLoading.value || !hasMoreReplies.value) return
+  
+  const scrollHeight = document.documentElement.scrollHeight
+  const scrollTop = document.documentElement.scrollTop || document.body.scrollTop
+  const clientHeight = document.documentElement.clientHeight
+  
+  // 距离底部 100px 时加载更多
+  if (scrollHeight - scrollTop - clientHeight < 100) {
+    fetchReplies(true)
+  }
 }
 
 // 处理点赞
 const handleLike = async () => {
+  if (!userStore.isLoggedIn) {
+    alert('请先登录')
+    return
+  }
+
   if (!post.value) return
+
+  // 记录原始状态用于回滚
+  const originalLiked = post.value.isLiked
+  const originalLikedTimes = post.value.likedTimes
+
+  // 乐观更新
+  post.value.isLiked = !originalLiked
+  post.value.likedTimes = originalLiked ? originalLikedTimes - 1 : originalLikedTimes + 1
 
   try {
     const response = await toggleLikePost(postId.value)
-    if (response.code === 200 && post.value) {
-      post.value.isLiked = response.data.liked
-      post.value.likedTimes = response.data.likedTimes
+    if (response.code !== 200) {
+      throw new Error(response.message || '点赞失败')
     }
-  } catch (error) {
+  } catch (error: any) {
     console.error('点赞失败:', error)
+    // 发生错误，回滚状态
+    if (post.value) {
+      post.value.isLiked = originalLiked
+      post.value.likedTimes = originalLikedTimes
+    }
+    alert(error.message || '操作失败，请重试')
   }
 }
 
 // 处理评论成功
 const handleReplySuccess = () => {
-  replyCurrentPage.value = 1
-  fetchReplies()
+  // 重新获取第一页评论
+  fetchReplies(false)
   if (post.value) {
     post.value.replyCount += 1
   }
 }
 
-// 处理评论分页变化
-const handleReplyPageChange = (page: number) => {
-  replyCurrentPage.value = page
-  window.scrollTo({ top: 0, behavior: 'smooth' })
-}
-
-// 格式化日期
-const formatDate = (dateString: string) => {
-  const date = new Date(dateString)
-  const year = date.getFullYear()
-  const month = String(date.getMonth() + 1).padStart(2, '0')
-  const day = String(date.getDate()).padStart(2, '0')
-  return `${year}-${month}-${day}`
-}
-
 // 预览图片
 const previewImage = (imageUrl: string) => {
-  window.open(imageUrl, '_blank')
+  previewImageUrl.value = imageUrl
+  previewVisible.value = true
 }
 
 // 返回
@@ -343,13 +341,13 @@ const goBack = () => {
   router.back()
 }
 
-// 监听评论页码变化
-watch(replyCurrentPage, () => {
-  fetchReplies()
-})
-
 onMounted(() => {
   fetchPostDetail()
   fetchReplies()
+  window.addEventListener('scroll', handleScroll)
+})
+
+onUnmounted(() => {
+  window.removeEventListener('scroll', handleScroll)
 })
 </script>

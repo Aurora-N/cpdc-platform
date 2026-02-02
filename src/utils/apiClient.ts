@@ -30,8 +30,20 @@ apiClient.interceptors.request.use(
 
 // axios响应式拦截器
 apiClient.interceptors.response.use(
-  // 成功的回调：直接返回 res.data
-  (res) => res.data,
+  // 成功的回调
+  (res) => {
+    // 检查业务状态码
+    const data = res.data
+    // 如果返回体包含 code 且不为 200，视为业务错误，抛出异常
+    if (data && typeof data.code !== 'undefined' && data.code !== 200) {
+      const message = data.message || data.msg || '操作失败'
+      return Promise.reject({
+        message,
+        response: { data }
+      })
+    }
+    return data
+  },
   // 失败的回调
   (e) => {
     let message = '发生未知错误';

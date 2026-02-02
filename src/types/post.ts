@@ -4,8 +4,15 @@ import type { ApiResponse } from './user'
 
 // 分页查询参数
 export interface PageQueryDTO {
-  page?: number
+  current?: number
   size?: number
+  keyword?: string
+}
+
+// 评论查询参数
+export interface QueryReplyDTO extends PageQueryDTO {
+  postId: number
+  answerId: number
 }
 
 // 分页返回数据
@@ -61,8 +68,9 @@ export interface CreatePostDTO {
 
 // 创建评论DTO
 export interface CreateReplyDTO {
+  postId: number
   content: string
-  answerId?: number // 上级ID，0或不传表示回复帖子
+  answerId: number // 上级ID，0或不传表示回复帖子
   targetUserId?: number // 回复的目标用户ID
   targetReplyId?: number // 回复的评论ID
   images?: string[] // 图片URL数组
@@ -77,8 +85,5 @@ export type PostDetailResponse = ApiResponse<Post>
 // 评论列表响应
 export type ReplyListResponse = ApiResponse<PageResult<Reply>>
 
-// 点赞响应
-export type LikeResponse = ApiResponse<{
-  liked: boolean // 是否已点赞
-  likedTimes: number // 当前点赞数
-}>
+// 点赞响应 (后端返回 Result<String>)
+export type LikeResponse = ApiResponse<string>

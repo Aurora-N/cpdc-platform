@@ -125,7 +125,7 @@
 
 <script setup lang="ts">
 import { ref, reactive } from 'vue'
-import { createPost, uploadImage } from '@/apis/postApi'
+import { createPost, uploadImage, deleteImage } from '@/apis/postApi'
 import { useUserStore } from '@/stores/userStore'
 
 const emit = defineEmits<{
@@ -179,8 +179,18 @@ const handleImageUpload = async (event: Event, index: number) => {
 }
 
 // 移除图片
-const removeImage = (index: number) => {
-  imageList.value[index] = null
+const removeImage = async (index: number) => {
+  const url = imageList.value[index]
+  if (url) {
+    try {
+      await deleteImage(url)
+      imageList.value[index] = null
+    } catch (error) {
+      console.error('删除图片失败:', error)
+      // 即使后端删除失败，前端也移除显示，以免卡住用户
+      imageList.value[index] = null
+    }
+  }
 }
 
 // 提交表单

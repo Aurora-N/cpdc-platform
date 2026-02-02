@@ -58,7 +58,8 @@ const handleSubmit = async () => {
 
   submitting.value = true
   try {
-    const response = await createReply(props.postId, {
+    const response = await createReply({
+      postId: props.postId,
       content: content.value.trim(),
       answerId: props.answerId || 0,
       targetUserId: props.targetUserId,
