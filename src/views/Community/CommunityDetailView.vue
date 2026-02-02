@@ -1,161 +1,171 @@
 <template>
-  <div class="flex flex-col items-center min-h-screen bg-gradient-to-b from-gray-50 to-white">
+  <div class="min-h-screen bg-gray-50 text-gray-900 font-sans">
+    <!-- 背景装饰 -->
+    <div class="fixed inset-0 pointer-events-none z-0">
+      <div class="absolute top-[-20%] left-[20%] w-[50%] h-[50%] bg-blue-100/40 rounded-full blur-[150px]"></div>
+    </div>
+
     <!-- 顶部占位区 -->
     <HeroComponent
       title="帖子详情"
       background-url="/cpdc-platform/exhibition/5.png"
       title-color="white"
+      class="relative z-10 shadow-sm"
     />
 
     <!-- 主要内容区 -->
-    <main class="max-w-[1600px] pb-12 px-4 md:px-8 lg:px-16 w-full">
-      <!-- 返回按钮 -->
-      <button
-        class="mt-8 mb-6 flex items-center gap-2 px-4 py-2 text-gray-600 hover:text-primary hover:bg-white rounded-lg transition-all font-medium"
-        @click="goBack"
-      >
-        <ArrowLeft class="w-5 h-5" />
-        <span>返回</span>
-      </button>
+    <main class="max-w-6xl mx-auto pb-24 px-4 sm:px-6 lg:px-8 w-full relative z-10 -mt-20">
+      <!-- 导航栏 -->
+      <div class="flex items-center justify-between mb-8">
+        <button
+          class="group flex items-center gap-2 px-5 py-2.5 text-gray-500 hover:text-gray-900 bg-white/80 hover:bg-white rounded-xl transition-all duration-300 font-medium border border-gray-100 hover:border-gray-200 backdrop-blur-md shadow-sm"
+          @click="goBack"
+        >
+          <ArrowLeft class="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
+          <span class="tracking-wide text-sm">返回列表</span>
+        </button>
+      </div>
 
       <!-- 加载中 -->
-      <div v-if="loading" class="flex justify-center items-center py-20">
-        <div class="flex flex-col items-center gap-4">
-          <div class="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
-          <div class="text-gray-500 text-lg">加载中...</div>
+      <div v-if="loading" class="flex flex-col justify-center items-center py-32 gap-4">
+        <div class="relative w-12 h-12">
+          <div class="absolute inset-0 border-2 border-primary/20 rounded-full"></div>
+          <div class="absolute inset-0 border-2 border-primary border-t-transparent rounded-full animate-spin"></div>
         </div>
+        <div class="text-primary/80 font-medium text-sm animate-pulse">加载中...</div>
       </div>
 
       <!-- 帖子详情 -->
-      <div v-else-if="post" class="bg-white rounded-2xl border border-gray-100 shadow-xl mb-8 overflow-hidden">
-        <div class="p-8 md:p-10">
-          <!-- 标题 -->
-          <h1 class="text-3xl md:text-4xl font-bold text-gray-900 mb-6 leading-tight">{{ post.title }}</h1>
-
-          <!-- 作者和发布时间 -->
-          <div class="flex items-center gap-4 text-sm mb-6 pb-6 border-b border-gray-100">
-            <div class="flex items-center gap-3">
-              <div class="w-10 h-10 bg-gradient-to-br from-primary-200 to-primary-300 rounded-full flex items-center justify-center text-primary-700 font-semibold">
-                {{ (post.authorName || `用户${post.authorId}`).charAt((post.authorName || `用户${post.authorId}`).length - 1) }}
+      <div v-else-if="post" class="bg-white/80 backdrop-blur-xl rounded-3xl border border-gray-100 shadow-xl mb-12 overflow-hidden relative group">
+        <!-- 装饰线条 -->
+        <div class="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-primary/20 to-transparent opacity-50"></div>
+        
+        <div class="p-8 md:p-12">
+          <!-- 头部信息 -->
+          <div class="flex items-center justify-between mb-8 pb-8 border-b border-gray-100">
+            <div class="flex items-center gap-4">
+              <div class="relative">
+                <div class="w-14 h-14 bg-gray-50 rounded-full flex items-center justify-center text-primary font-bold text-lg ring-1 ring-gray-100">
+                  {{ (post.authorName || `用户${post.authorId}`).charAt((post.authorName || `用户${post.authorId}`).length - 1) }}
+                </div>
               </div>
               <div>
-                <div class="font-semibold text-gray-800">{{ post.authorName || `用户${post.authorId}` }}</div>
-                <div class="text-gray-400 text-xs">{{ formatDate(post.createdTime) }}</div>
+                <div class="font-bold text-gray-900 text-lg tracking-wide">{{ post.authorName || `用户${post.authorId}` }}</div>
+                <div class="text-gray-400 text-xs mt-1 flex items-center gap-2">
+                  <span>{{ formatDate(post.createdTime) }}</span>
+                </div>
               </div>
+            </div>
+            
+            <div class="hidden md:flex items-center gap-3">
+              <button class="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-50 rounded-lg transition-colors">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h.01M12 12h.01M19 12h.01M6 12a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0z" />
+                </svg>
+              </button>
             </div>
           </div>
 
+          <!-- 标题 -->
+          <h1 class="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-8 leading-[1.2] tracking-wide">{{ post.title }}</h1>
+
           <!-- 内容 -->
-          <div class="text-gray-700 text-lg md:text-xl mb-8 leading-relaxed whitespace-pre-wrap">
+          <div class="prose prose-lg max-w-none text-gray-800 leading-loose mb-12 whitespace-pre-wrap font-normal tracking-wide">
             {{ post.content }}
           </div>
 
           <!-- 图片展示 -->
-          <div v-if="post.images && post.images.length > 0" class="mb-8">
-            <div
-              v-if="post.images.length === 1"
-              class="flex justify-start"
-            >
-              <img
-                :src="post.images[0]"
-                alt="帖子图片"
-                class="max-w-full md:max-w-3xl h-auto rounded-2xl object-cover cursor-pointer shadow-lg hover:shadow-xl transition-shadow"
-                @click="previewImage(post.images[0])"
-              />
-            </div>
-            <div
-              v-else-if="post.images.length === 2"
-              class="grid grid-cols-2 gap-4"
-            >
-              <img
+          <div v-if="post.images && post.images.length > 0" class="mb-12">
+            <div class="grid gap-4" :class="post.images.length === 1 ? 'grid-cols-1' : 'grid-cols-2'">
+              <div
                 v-for="(img, index) in post.images"
                 :key="index"
-                :src="img"
-                alt="帖子图片"
-                class="w-full h-72 md:h-96 object-cover rounded-xl cursor-pointer shadow-lg hover:shadow-xl transition-all hover:scale-[1.02]"
+                class="relative rounded-2xl overflow-hidden bg-gray-50 border border-gray-100 group/img cursor-zoom-in"
+                :class="post.images.length === 1 ? 'max-h-[600px]' : 'aspect-[4/3]'"
                 @click="previewImage(img)"
-              />
-            </div>
-            <div
-              v-else
-              class="grid grid-cols-3 gap-3"
-            >
-              <img
-                v-for="(img, index) in post.images.slice(0, 6)"
-                :key="index"
-                :src="img"
-                alt="帖子图片"
-                class="w-full h-56 md:h-72 object-cover rounded-xl cursor-pointer shadow-lg hover:shadow-xl transition-all hover:scale-[1.02]"
-                @click="previewImage(img)"
-              />
+              >
+                <img
+                  :src="img"
+                  alt="帖子图片"
+                  class="w-full h-full object-cover transition-transform duration-500 group-hover/img:scale-105"
+                  :class="post.images.length === 1 ? 'object-contain' : 'object-cover'"
+                />
+              </div>
             </div>
           </div>
 
           <!-- 交互数据 -->
-          <div class="flex items-center gap-8 pt-6 border-t border-gray-100">
-            <div class="flex items-center gap-2 text-gray-500">
-              <EyeIcon class="w-5 h-5" />
-              <span class="font-semibold">{{ post.watchTimes }}</span>
+          <div class="flex flex-col sm:flex-row items-center justify-between gap-6 pt-8 border-t border-gray-100">
+            <div class="flex items-center gap-4 w-full sm:w-auto">
+              <div class="flex items-center gap-2 px-4 py-2 rounded-xl bg-gray-50 border border-gray-100 text-gray-500 text-xs font-medium">
+                <EyeIcon class="w-4 h-4" />
+                <span class="tracking-wide">{{ post.watchTimes }} 阅读</span>
+              </div>
+              <div class="flex items-center gap-2 px-4 py-2 rounded-xl bg-gray-50 border border-gray-100 text-gray-500 text-xs font-medium">
+                <CommentIcon class="w-4 h-4" />
+                <span class="tracking-wide">{{ post.replyCount }} 评论</span>
+              </div>
             </div>
-            <div class="flex items-center gap-2 text-gray-500">
-              <CommentIcon class="w-5 h-5" />
-              <span class="font-semibold">{{ post.replyCount }}</span>
-            </div>
-            <div
-              class="flex items-center gap-2 cursor-pointer transition-all hover:scale-110"
-              :class="post.isLiked ? 'text-red-500' : 'text-gray-500 hover:text-red-500'"
+
+            <button
+              class="w-full sm:w-auto flex items-center justify-center gap-3 px-8 py-3 rounded-xl transition-all duration-300 active:scale-95 group/like border"
+              :class="post.isLiked 
+                ? 'bg-red-50 text-red-500 border-red-100 hover:bg-red-100' 
+                : 'bg-gray-50 text-gray-500 border-gray-100 hover:border-gray-200 hover:text-gray-700'"
               @click="handleLike"
             >
-              <HeartIcon :filled="post.isLiked" class="w-5 h-5 transition-transform" />
-              <span class="font-semibold">{{ post.likedTimes }}</span>
-            </div>
+              <HeartIcon :filled="post.isLiked" class="w-5 h-5 transition-transform group-hover/like:scale-110" />
+              <span class="font-bold">{{ post.likedTimes }}</span>
+            </button>
           </div>
         </div>
       </div>
 
       <!-- 评论区域 -->
-      <div class="bg-white rounded-2xl border border-gray-100 shadow-xl overflow-hidden">
-        <div class="p-8 md:p-10">
-          <div class="flex items-center gap-3 mb-8 pb-6 border-b border-gray-100">
-            <div class="w-10 h-10 bg-gradient-to-br from-primary-200 to-primary-300 rounded-full flex items-center justify-center">
-              <CommentIcon class="w-5 h-5 text-primary-700" />
-            </div>
-            <h2 class="text-2xl font-bold text-gray-900">评论 <span class="text-primary font-semibold">({{ replyCount }})</span></h2>
-          </div>
+      <div class="max-w-4xl mx-auto">
+        <div class="flex items-center justify-between mb-8">
+          <h2 class="text-xl font-bold text-gray-900 tracking-wide flex items-center gap-3">
+            <span class="w-1.5 h-6 bg-primary rounded-full"></span>
+            评论 <span class="text-gray-400 text-sm ml-2">共 {{ replyCount }} 条</span>
+          </h2>
+        </div>
 
-          <!-- 发表评论 -->
+        <!-- 发表评论 -->
+        <div class="bg-white/80 backdrop-blur-md rounded-2xl p-6 shadow-lg border border-gray-100 mb-8">
           <ReplyForm
             :post-id="postId"
             @reply-success="handleReplySuccess"
           />
+        </div>
 
-          <!-- 评论列表 -->
-          <div v-if="repliesLoading" class="py-8 text-center text-gray-500">
-            加载中...
-          </div>
+        <!-- 评论列表 -->
+        <div v-if="repliesLoading" class="py-20 flex justify-center">
+          <div class="w-10 h-10 border-4 border-primary/20 border-t-primary rounded-full animate-spin"></div>
+        </div>
 
-          <div v-else-if="replies.length === 0" class="py-8 text-center text-gray-500">
-            暂无评论
-          </div>
+        <div v-else-if="replies.length === 0" class="py-20 text-center bg-gray-50/50 rounded-3xl border border-dashed border-gray-200">
+          <div class="text-gray-400 mb-2 text-lg">暂无评论</div>
+          <div class="text-gray-400 text-sm">快来抢沙发吧</div>
+        </div>
 
-          <div v-else class="mt-6 space-y-4">
-            <ReplyItem
-              v-for="reply in replies"
-              :key="reply.id"
-              :reply="reply"
-              :post-id="postId"
-              @reply-success="handleReplySuccess"
-            />
-          </div>
+        <div v-else class="space-y-6">
+          <ReplyItem
+            v-for="reply in replies"
+            :key="reply.id"
+            :reply="reply"
+            :post-id="postId"
+            @reply-success="handleReplySuccess"
+          />
+        </div>
 
-          <!-- 评论分页 -->
+        <!-- 评论分页 -->
+        <div class="mt-12 flex justify-center">
           <Pagination
             v-if="replyTotalPages > 0"
             :current-page="replyCurrentPage"
             :total-pages="replyTotalPages"
             :total="replyTotal"
             @page-change="handleReplyPageChange"
-            class="mt-6"
           />
         </div>
       </div>

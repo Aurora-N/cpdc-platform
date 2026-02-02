@@ -1,110 +1,82 @@
 <template>
-  <div class="flex flex-col items-center min-h-screen bg-gradient-to-b from-gray-50 to-white">
+  <div class="min-h-screen bg-gray-50 relative overflow-hidden text-gray-900 font-sans">
+    <!-- 背景装饰 -->
+    <div class="fixed inset-0 pointer-events-none z-0">
+      <div class="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-primary/5 rounded-full blur-[120px]"></div>
+      <div class="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-blue-500/5 rounded-full blur-[120px]"></div>
+    </div>
+
     <!-- 顶部占位区 -->
     <HeroComponent
       title="社区互动"
       background-url="/cpdc-platform/exhibition/5.png"
       title-color="white"
+      class="relative z-10 shadow-sm"
     />
 
     <!-- 主要内容区 -->
-    <main class="max-w-[1600px] pb-12 px-4 md:px-8 lg:px-16 w-full">
-      <!-- 搜索栏和发帖按钮 -->
-      <div class="relative py-10 md:py-12 mb-8">
-        <!-- 多层背景装饰 -->
-        <div class="absolute inset-0 -mx-4 md:-mx-8 rounded-3xl overflow-hidden">
-          <!-- 渐变背景 -->
-          <div class="absolute inset-0 bg-gradient-to-br from-primary/8 via-white to-primary/5"></div>
-          <!-- 装饰性图案 -->
-          <div class="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
-          <div class="absolute bottom-0 left-0 w-48 h-48 bg-primary/5 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2"></div>
-          <!-- 玻璃态效果 -->
-          <div class="absolute inset-0 bg-white/95 backdrop-blur-md border border-primary/20 shadow-2xl"></div>
-        </div>
-        
-        <div class="relative flex flex-col md:flex-row gap-5 px-6 md:px-10">
-          <!-- 搜索栏 -->
-          <div class="flex-1 relative group">
-            <!-- 搜索栏背景光晕 -->
-            <div class="absolute -inset-1 bg-gradient-to-r from-primary/20 via-primary/10 to-transparent rounded-3xl blur-xl opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity duration-500"></div>
-            
-            <div class="relative flex items-center bg-white/95 backdrop-blur-sm rounded-3xl border-2 border-gray-100 shadow-xl hover:shadow-2xl transition-all duration-500 focus-within:border-primary/50 focus-within:shadow-[0_20px_60px_rgba(198,77,65,0.15)] focus-within:ring-4 focus-within:ring-primary/10 overflow-hidden">
-              <!-- 左侧图标区域 -->
-              <div class="pl-6 pr-4">
-                <div class="relative">
-                  <div class="w-12 h-12 bg-gradient-to-br from-primary-200 via-primary-300 to-primary-400 rounded-2xl flex items-center justify-center shadow-lg group-hover:shadow-xl group-hover:scale-110 transition-all duration-300">
-                    <div class="absolute inset-0 bg-gradient-to-br from-white/30 to-transparent rounded-2xl"></div>
-                    <SearchIcon class="w-6 h-6 text-primary-700 relative z-10" />
-                  </div>
-                  <!-- 图标光点 -->
-                  <div class="absolute top-1 right-1 w-2 h-2 bg-white rounded-full opacity-60"></div>
-                </div>
-              </div>
-              
-              <!-- 输入框 -->
-              <input
-                v-model="searchKeyword"
-                type="text"
-                placeholder="搜索标题或内容..."
-                class="flex-1 py-5 pr-4 focus:outline-none text-base bg-transparent placeholder:text-gray-400 text-gray-800 font-medium"
-                @keyup.enter="handleSearch"
-              />
-              
-              <!-- 搜索按钮 -->
-              <button
-                class="mr-3 px-6 py-2.5 bg-gradient-to-r from-primary to-primary-600 text-white rounded-2xl hover:from-primary-600 hover:to-primary-700 transition-all font-semibold shadow-lg hover:shadow-xl active:scale-95 text-sm relative overflow-hidden group/btn"
-                @click="handleSearch"
-              >
-                <div class="absolute inset-0 bg-gradient-to-r from-white/0 via-white/30 to-white/0 translate-x-[-100%] group-hover/btn:translate-x-[100%] transition-transform duration-700"></div>
-                <span class="relative">搜索</span>
-              </button>
-            </div>
+    <main class="max-w-7xl mx-auto pb-24 px-4 sm:px-6 lg:px-8 w-full relative z-10">
+      <!-- 搜索栏和发帖按钮 (居中悬浮胶囊设计) -->
+      <div class="max-w-4xl mx-auto -mt-8 mb-12 relative z-20">
+        <div class="bg-white rounded-full p-2 shadow-xl shadow-gray-200/50 flex items-center gap-2 border border-gray-100">
+          <!-- 搜索图标 -->
+          <div class="pl-4 text-gray-400">
+            <SearchIcon class="w-5 h-5" />
           </div>
+          
+          <!-- 输入框 -->
+          <input
+            v-model="searchKeyword"
+            type="text"
+            placeholder="搜索感兴趣的话题..."
+            class="flex-1 py-3 px-2 bg-transparent border-none text-gray-900 placeholder-gray-400 focus:ring-0 focus:outline-none text-base"
+            @keyup.enter="handleSearch"
+          />
+
+          <!-- 搜索按钮 -->
+          <button
+            class="px-6 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-600 rounded-full transition-all font-medium text-sm hidden sm:block"
+            @click="handleSearch"
+          >
+            搜索
+          </button>
+
+          <!-- 分割线 -->
+          <div class="w-px h-8 bg-gray-200 hidden sm:block"></div>
 
           <!-- 发帖按钮 -->
           <button
-            class="relative px-10 py-5 bg-gradient-to-br from-primary via-primary-600 to-primary-700 text-white rounded-3xl hover:from-primary-600 hover:via-primary-700 hover:to-primary-800 transition-all duration-500 font-bold whitespace-nowrap shadow-2xl hover:shadow-[0_25px_70px_rgba(198,77,65,0.4)] transform hover:-translate-y-1.5 active:translate-y-0 group overflow-hidden"
+            class="flex items-center gap-2 px-6 py-2.5 bg-primary hover:bg-primary-600 text-white font-bold rounded-full transition-all shadow-md shadow-primary/30 hover:shadow-lg hover:shadow-primary/40 active:scale-95 whitespace-nowrap"
             @click="showPostModal = true"
           >
-            <!-- 多层背景动画 -->
-            <div class="absolute inset-0 bg-gradient-to-r from-white/0 via-white/25 to-white/0 translate-x-[-200%] group-hover:translate-x-[200%] transition-transform duration-1000"></div>
-            <div class="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-            
-            <!-- 装饰性光点 -->
-            <div class="absolute top-2 right-4 w-2 h-2 bg-white/60 rounded-full blur-sm"></div>
-            <div class="absolute bottom-3 left-6 w-1.5 h-1.5 bg-white/40 rounded-full blur-sm"></div>
-            
-            <span class="relative flex items-center gap-3 text-lg">
-              <div class="w-8 h-8 bg-white/25 rounded-xl flex items-center justify-center backdrop-blur-sm border border-white/30 shadow-inner group-hover:bg-white/30 transition-all">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 4v16m8-8H4" />
-                </svg>
-              </div>
-              <span class="tracking-wide">发布帖子</span>
-            </span>
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4" />
+            </svg>
+            <span>发布新帖</span>
           </button>
         </div>
       </div>
 
       <!-- 帖子列表 -->
-      <div v-if="loading" class="flex justify-center items-center py-20">
-        <div class="flex flex-col items-center gap-4">
-          <div class="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
-          <div class="text-gray-500 text-lg">加载中...</div>
+      <div v-if="loading" class="flex flex-col justify-center items-center py-32 gap-4">
+        <div class="relative w-16 h-16">
+          <div class="absolute inset-0 border-4 border-primary/20 rounded-full"></div>
+          <div class="absolute inset-0 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
         </div>
+        <div class="text-primary/80 font-medium text-sm animate-pulse">数据加载中...</div>
       </div>
 
-      <div v-else-if="posts.length === 0" class="flex flex-col justify-center items-center py-20">
-        <div class="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mb-4">
-          <svg class="w-12 h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+      <div v-else-if="posts.length === 0" class="flex flex-col justify-center items-center py-32 bg-white/50 rounded-3xl border border-dashed border-gray-200 backdrop-blur-sm">
+        <div class="w-20 h-20 bg-gray-50 rounded-3xl flex items-center justify-center mb-6 ring-1 ring-gray-100">
+          <svg class="w-10 h-10 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
           </svg>
         </div>
-        <div class="text-gray-500 text-lg">暂无帖子</div>
-        <div class="text-gray-400 text-sm mt-2">快来发布第一条帖子吧！</div>
+        <div class="text-gray-900 text-xl font-bold mb-2">暂无数据</div>
+        <div class="text-gray-500 text-sm">还没有相关帖子，快来发布第一条吧</div>
       </div>
 
-      <div v-else class="space-y-6">
+      <div v-else class="grid grid-cols-1 gap-6">
         <PostCard
           v-for="post in posts"
           :key="post.id"

@@ -1,24 +1,26 @@
 <template>
-  <div class="mb-6 p-4 bg-gray-50 rounded-xl border border-gray-200">
-    <div class="flex flex-col md:flex-row gap-4">
-      <div class="flex-1">
+  <div class="mb-2">
+    <div class="relative group">
+      <div class="absolute -inset-0.5 bg-gradient-to-r from-primary/30 to-blue-500/30 rounded-2xl opacity-20 group-hover:opacity-40 transition duration-500 blur"></div>
+      <div class="relative">
         <textarea
           v-model="content"
           rows="3"
           maxlength="255"
-          placeholder="写下你的评论..."
-          class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 resize-none transition-all bg-white"
+          placeholder="分享你的见解..."
+          class="w-full px-5 py-4 bg-white border border-gray-200 focus:border-primary focus:ring-0 rounded-2xl text-base text-gray-900 placeholder-gray-400 resize-none transition-all duration-200"
         ></textarea>
-        <div class="text-sm text-gray-400 mt-2 text-right">{{ content.length }}/255</div>
-      </div>
-      <div class="flex flex-col justify-end">
-        <button
-          class="px-6 py-3 bg-gradient-to-r from-primary to-primary-600 text-white rounded-xl hover:from-primary-600 hover:to-primary-700 disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap font-medium shadow-md hover:shadow-lg transition-all"
-          :disabled="submitting || !content.trim()"
-          @click="handleSubmit"
-        >
-          {{ submitting ? '提交中...' : '发表评论' }}
-        </button>
+        
+        <div class="flex items-center justify-between mt-3 px-1">
+          <div class="text-xs text-gray-400 font-medium">{{ content.length }}/255</div>
+          <button
+            class="px-6 py-2.5 bg-primary text-white rounded-xl hover:bg-primary-600 disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap font-bold text-sm shadow-lg shadow-primary/30 transition-all active:scale-95 tracking-wide"
+            :disabled="submitting || !content.trim()"
+            @click="handleSubmit"
+          >
+            {{ submitting ? '发送中...' : '发送' }}
+          </button>
+        </div>
       </div>
     </div>
   </div>

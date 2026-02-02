@@ -1,94 +1,93 @@
 <template>
-  <div class="fixed inset-0 bg-black/60 backdrop-blur-sm flex justify-center items-center z-50 p-4" @click.self="handleClose">
-    <div class="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl">
-      <div class="p-8">
-        <!-- 标题栏 -->
-        <div class="flex justify-between items-center mb-8 pb-6 border-b border-gray-100">
-          <div class="flex items-center gap-3">
-            <div class="w-10 h-10 bg-gradient-to-br from-primary-200 to-primary-300 rounded-full flex items-center justify-center">
-              <svg class="w-5 h-5 text-primary-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-              </svg>
-            </div>
-            <h2 class="text-2xl font-bold text-gray-900">发布帖子</h2>
-          </div>
-          <button
-            class="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-full transition-all"
-            @click="handleClose"
-          >
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          </button>
-        </div>
+  <div class="fixed inset-0 bg-gray-900/40 backdrop-blur-md flex justify-center items-center z-50 p-4 transition-all duration-300" @click.self="handleClose">
+    <div class="bg-white rounded-3xl w-full max-w-2xl max-h-[90vh] overflow-y-auto shadow-2xl flex flex-col animate-in zoom-in-95 duration-200 border border-gray-100 relative">
+      <!-- 标题栏 -->
+      <div class="px-8 py-6 border-b border-gray-100 flex justify-between items-center sticky top-0 bg-white/90 backdrop-blur-sm z-10">
+        <h2 class="text-xl font-bold text-gray-900 tracking-wide flex items-center gap-2">
+          <span class="w-1.5 h-6 bg-primary rounded-full"></span>
+          发布新帖
+        </h2>
+        <button
+          class="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-gray-900 hover:bg-gray-100 rounded-full transition-all"
+          @click="handleClose"
+        >
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
 
+      <div class="p-8 relative z-0">
         <!-- 表单 -->
-        <form @submit.prevent="handleSubmit">
+        <form @submit.prevent="handleSubmit" class="space-y-8">
           <!-- 标题 -->
-          <div class="mb-6">
-            <label class="block text-gray-700 font-semibold mb-3 text-lg">标题 <span class="text-red-500">*</span></label>
+          <div class="space-y-3">
+            <label class="block text-sm font-semibold text-gray-700">标题</label>
             <input
               v-model="formData.title"
               type="text"
-              maxlength="20"
-              placeholder="请输入标题（最多20字）"
-              class="w-full px-5 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all"
+              maxlength="30"
+              placeholder="请输入引人注目的标题"
+              class="w-full px-4 py-3 bg-gray-50 border border-gray-200 focus:border-primary focus:ring-1 focus:ring-primary rounded-xl text-lg font-medium text-gray-900 placeholder-gray-400 transition-all duration-200"
               required
             />
-            <div class="text-sm text-gray-400 mt-2 text-right">{{ formData.title.length }}/20</div>
+            <div class="text-xs text-gray-400 text-right">{{ formData.title.length }}/30</div>
           </div>
 
           <!-- 内容 -->
-          <div class="mb-6">
-            <label class="block text-gray-700 font-semibold mb-3 text-lg">内容 <span class="text-red-500">*</span></label>
+          <div class="space-y-3">
+            <label class="block text-sm font-semibold text-gray-700">内容</label>
             <textarea
               v-model="formData.content"
               rows="6"
-              maxlength="100"
-              placeholder="请输入内容（最多100字）"
-              class="w-full px-5 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 resize-none transition-all"
+              maxlength="500"
+              placeholder="分享你的想法..."
+              class="w-full px-4 py-3 bg-gray-50 border border-gray-200 focus:border-primary focus:ring-1 focus:ring-primary rounded-xl text-base text-gray-900 placeholder-gray-400 resize-none transition-all duration-200"
               required
             ></textarea>
-            <div class="text-sm text-gray-400 mt-2 text-right">{{ formData.content.length }}/100</div>
+            <div class="text-xs text-gray-400 text-right">{{ formData.content.length }}/500</div>
           </div>
 
           <!-- 图片上传 -->
-          <div class="mb-8">
-            <label class="block text-gray-700 font-semibold mb-3 text-lg">图片（最多6张）</label>
-            <div class="grid grid-cols-3 gap-4">
+          <div class="space-y-3">
+            <label class="block text-sm font-semibold text-gray-700">图片 <span class="text-gray-400 font-normal ml-2 text-xs">最多6张</span></label>
+            <div class="grid grid-cols-3 sm:grid-cols-4 gap-4">
               <div
                 v-for="(image, index) in imageList"
                 :key="index"
-                class="relative aspect-square border-2 border-dashed border-gray-300 rounded-xl overflow-hidden hover:border-primary transition-colors group"
+                class="relative aspect-square rounded-xl overflow-hidden group bg-gray-50 border border-gray-200 hover:border-primary/30 transition-colors"
               >
-                <img
-                  v-if="image"
-                  :src="image"
-                  alt="预览图"
-                  class="w-full h-full object-cover"
-                />
+                <template v-if="image">
+                  <img
+                    :src="image"
+                    alt="预览图"
+                    class="w-full h-full object-cover"
+                  />
+                  <div class="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-colors"></div>
+                  <button
+                    type="button"
+                    class="absolute top-1.5 right-1.5 bg-black/50 hover:bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-200 scale-90 group-hover:scale-100 backdrop-blur-sm"
+                    @click="removeImage(index)"
+                  >
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  </button>
+                </template>
+                
                 <div
                   v-else
-                  class="w-full h-full flex flex-col justify-center items-center cursor-pointer hover:bg-gray-50 transition-colors"
+                  class="w-full h-full flex flex-col justify-center items-center cursor-pointer hover:bg-gray-100 transition-colors group/add"
                   @click="triggerFileInput(index)"
                 >
-                  <div class="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mb-2 group-hover:bg-primary/10 transition-colors">
-                    <svg class="w-6 h-6 text-gray-400 group-hover:text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <div class="w-8 h-8 rounded-full bg-white border border-gray-200 flex items-center justify-center mb-2 shadow-sm group-hover/add:border-primary group-hover/add:text-primary transition-all">
+                    <svg class="w-4 h-4 text-gray-400 group-hover/add:text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
                     </svg>
                   </div>
-                  <div class="text-sm text-gray-500">添加图片</div>
+                  <span class="text-xs text-gray-400 group-hover/add:text-primary transition-colors">添加</span>
                 </div>
-                <button
-                  v-if="image"
-                  type="button"
-                  class="absolute top-2 right-2 bg-red-500 text-white rounded-full w-7 h-7 flex items-center justify-center text-sm hover:bg-red-600 shadow-lg transition-all hover:scale-110"
-                  @click="removeImage(index)"
-                >
-                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                  </svg>
-                </button>
+
                 <input
                   :ref="(el) => (fileInputs[index] = el as HTMLInputElement)"
                   type="file"
@@ -99,25 +98,26 @@
               </div>
             </div>
           </div>
-
-          <!-- 按钮 -->
-          <div class="flex justify-end gap-4 pt-6 border-t border-gray-100">
-            <button
-              type="button"
-              class="px-8 py-3 border-2 border-gray-200 rounded-xl text-gray-700 hover:bg-gray-50 hover:border-gray-300 transition-all font-medium"
-              @click="handleClose"
-            >
-              取消
-            </button>
-            <button
-              type="submit"
-              class="px-8 py-3 bg-gradient-to-r from-primary to-primary-600 text-white rounded-xl hover:from-primary-600 hover:to-primary-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all font-medium shadow-lg hover:shadow-xl"
-              :disabled="submitting"
-            >
-              {{ submitting ? '发布中...' : '发布' }}
-            </button>
-          </div>
         </form>
+      </div>
+
+      <!-- 底部按钮 -->
+      <div class="px-8 py-6 border-t border-gray-100 flex justify-end gap-3 bg-gray-50/50">
+        <button
+          type="button"
+          class="px-6 py-2.5 rounded-xl text-gray-500 hover:text-gray-900 hover:bg-gray-100 transition-all font-medium text-sm"
+          @click="handleClose"
+        >
+          取消
+        </button>
+        <button
+          type="button"
+          class="px-8 py-2.5 bg-primary text-white rounded-xl hover:bg-primary-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all font-bold text-sm shadow-lg shadow-primary/30 tracking-wide"
+          :disabled="submitting"
+          @click="handleSubmit"
+        >
+          {{ submitting ? '发布中...' : '发布' }}
+        </button>
       </div>
     </div>
   </div>

@@ -1,91 +1,80 @@
 <template>
   <div
-    class="w-full bg-white rounded-2xl border border-gray-100 hover:border-primary/30 duration-300 shadow-md hover:shadow-xl transition-all cursor-pointer overflow-hidden group"
+    class="group relative bg-white rounded-2xl p-6 sm:p-8 transition-all duration-300 border border-gray-100 hover:border-primary/20 hover:shadow-xl hover:-translate-y-1 overflow-hidden"
     @click="goToDetail"
   >
-    <div class="p-6 md:p-8">
-      <!-- 标题 -->
-      <h2 class="text-xl md:text-2xl font-bold text-gray-900 mb-4 group-hover:text-primary transition-colors line-clamp-2">
+    <!-- 顶部作者信息 -->
+    <div class="relative flex items-center justify-between mb-5">
+      <div class="flex items-center gap-3">
+        <div class="relative w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center text-primary font-bold text-sm ring-1 ring-gray-100 group-hover:ring-primary/20 transition-all">
+          {{ (post.authorName || `用户${post.authorId}`).charAt((post.authorName || `用户${post.authorId}`).length - 1) }}
+        </div>
+        <div class="flex flex-col">
+          <span class="font-bold text-gray-900 text-sm tracking-wide group-hover:text-primary transition-colors">{{ post.authorName || `用户${post.authorId}` }}</span>
+          <span class="text-gray-400 text-xs">{{ formatDate(post.createdTime) }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 标题和内容 -->
+    <div class="relative mb-5">
+      <h2 class="text-xl font-bold text-gray-900 mb-3 group-hover:text-primary transition-colors leading-tight tracking-wide">
         {{ post.title }}
       </h2>
-
-      <!-- 作者和发布时间 -->
-      <div class="flex items-center gap-4 text-sm text-gray-500 mb-4 pb-4 border-b border-gray-100">
-        <div class="flex items-center gap-2">
-          <div class="w-8 h-8 bg-gradient-to-br from-primary-200 to-primary-300 rounded-full flex items-center justify-center text-primary-700 font-semibold text-xs">
-            {{ (post.authorName || `用户${post.authorId}`).charAt((post.authorName || `用户${post.authorId}`).length - 1) }}
-          </div>
-          <span class="font-medium text-gray-700">{{ post.authorName || `用户${post.authorId}` }}</span>
-        </div>
-        <span class="text-gray-400">·</span>
-        <span class="text-gray-500">{{ formatDate(post.createdTime) }}</span>
-      </div>
-
-      <!-- 内容 -->
-      <div class="text-gray-700 text-base md:text-lg mb-5 leading-relaxed line-clamp-3">
+      <p class="text-gray-600 text-base leading-relaxed line-clamp-3 font-medium">
         {{ post.content }}
-      </div>
+      </p>
+    </div>
 
-      <!-- 图片展示 -->
-      <div v-if="post.images && post.images.length > 0" class="mb-5">
+    <!-- 图片网格 -->
+    <div v-if="post.images && post.images.length > 0" class="relative mb-6">
+      <div
+        class="grid gap-2"
+        :class="getImageGridClass(post.images.length)"
+      >
         <div
-          v-if="post.images.length === 1"
-          class="flex justify-start"
+          v-for="(img, index) in post.images.slice(0, 3)"
+          :key="index"
+          class="relative aspect-[4/3] rounded-xl overflow-hidden bg-gray-50 border border-gray-100 group/img"
+          @click.stop="previewImage(img)"
         >
           <img
-            :src="post.images[0]"
-            alt="帖子图片"
-            class="max-w-full md:max-w-lg h-auto rounded-xl object-cover shadow-md hover:shadow-lg transition-shadow cursor-pointer"
-            @click.stop="previewImage(post.images[0])"
-          />
-        </div>
-        <div
-          v-else-if="post.images.length === 2"
-          class="grid grid-cols-2 gap-3"
-        >
-          <img
-            v-for="(img, index) in post.images"
-            :key="index"
             :src="img"
             alt="帖子图片"
-            class="w-full h-52 md:h-64 object-cover rounded-xl cursor-pointer shadow-md hover:shadow-lg transition-all hover:scale-[1.02]"
-            @click.stop="previewImage(img)"
+            class="w-full h-full object-cover transition-transform duration-500 group-hover/img:scale-110"
           />
+          <div v-if="index === 2 && post.images.length > 3" class="absolute inset-0 bg-black/50 flex items-center justify-center text-white font-bold text-lg backdrop-blur-[2px]">
+            +{{ post.images.length - 3 }}
+          </div>
         </div>
-        <div
-          v-else
-          class="grid grid-cols-3 gap-2"
-        >
-          <img
-            v-for="(img, index) in post.images.slice(0, 6)"
-            :key="index"
-            :src="img"
-            alt="帖子图片"
-            class="w-full h-36 md:h-48 object-cover rounded-lg cursor-pointer shadow-md hover:shadow-lg transition-all hover:scale-[1.02]"
-            @click.stop="previewImage(img)"
-          />
-        </div>
+      </div>
+    </div>
+
+    <!-- 底部交互栏 -->
+    <div class="relative flex items-center gap-2 pt-5 border-t border-gray-50">
+      <!-- 浏览数 -->
+      <div class="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-gray-50 text-gray-500 text-xs font-medium border border-gray-100 cursor-default">
+        <EyeIcon class="w-4 h-4" />
+        <span>{{ post.watchTimes }} 浏览</span>
+      </div>
+      
+      <!-- 评论数 -->
+      <div class="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-gray-50 text-gray-500 text-xs font-medium border border-gray-100 cursor-default">
+        <CommentIcon class="w-4 h-4" />
+        <span>{{ post.replyCount }} 回复</span>
       </div>
 
-      <!-- 交互数据 -->
-      <div class="flex items-center gap-6 pt-4 border-t border-gray-100">
-        <div class="flex items-center gap-2 text-gray-500 hover:text-primary transition-colors">
-          <EyeIcon class="w-5 h-5" />
-          <span class="font-medium">{{ post.watchTimes }}</span>
-        </div>
-        <div class="flex items-center gap-2 text-gray-500 hover:text-primary transition-colors">
-          <CommentIcon class="w-5 h-5" />
-          <span class="font-medium">{{ post.replyCount }}</span>
-        </div>
-        <div
-          class="flex items-center gap-2 cursor-pointer transition-all hover:scale-110"
-          :class="post.isLiked ? 'text-red-500' : 'text-gray-500 hover:text-red-500'"
-          @click.stop="handleLike"
-        >
-          <HeartIcon :filled="post.isLiked" class="w-5 h-5 transition-transform" />
-          <span class="font-medium">{{ post.likedTimes }}</span>
-        </div>
-      </div>
+      <!-- 点赞按钮 (右侧) -->
+      <button
+        class="ml-auto flex items-center gap-2 px-4 py-1.5 rounded-lg transition-all duration-300 border group/like"
+        :class="post.isLiked 
+          ? 'bg-red-50 text-red-500 border-red-100 hover:bg-red-100' 
+          : 'bg-gray-50 text-gray-500 border-gray-100 hover:border-gray-200 hover:text-gray-700'"
+        @click.stop="handleLike"
+      >
+        <HeartIcon :filled="post.isLiked" class="w-4 h-4 transition-transform group-hover/like:scale-110" />
+        <span class="text-xs font-bold">{{ post.likedTimes }}</span>
+      </button>
     </div>
   </div>
 </template>
@@ -117,6 +106,13 @@ const formatDate = (dateString: string) => {
   return `${year}-${month}-${day}`
 }
 
+// 获取图片网格样式
+const getImageGridClass = (count: number) => {
+  if (count === 1) return 'grid-cols-1 max-w-sm'
+  if (count === 2) return 'grid-cols-2'
+  return 'grid-cols-3'
+}
+
 // 跳转到详情页
 const goToDetail = () => {
   router.push(`/community/${props.post.id}`)
@@ -136,7 +132,6 @@ const handleLike = async () => {
 
 // 预览图片
 const previewImage = (imageUrl: string) => {
-  // 可以在这里实现图片预览功能
   window.open(imageUrl, '_blank')
 }
 </script>

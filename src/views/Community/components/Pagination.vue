@@ -1,28 +1,25 @@
 <template>
-  <div class="flex flex-col md:flex-row justify-center items-center gap-4 my-10">
-    <div class="flex items-center gap-2">
+  <div class="flex flex-col md:flex-row justify-center items-center gap-6 my-12">
+    <div class="flex items-center gap-2 p-1 bg-white rounded-xl border border-gray-200 shadow-sm">
       <button
-        class="px-5 py-2.5 rounded-xl border-2 border-gray-200 bg-white text-gray-700 hover:bg-gray-50 hover:border-primary/30 disabled:opacity-40 disabled:cursor-not-allowed transition-all font-medium shadow-sm hover:shadow-md"
+        class="w-10 h-10 flex items-center justify-center rounded-lg text-gray-500 hover:text-primary hover:bg-gray-50 disabled:opacity-30 disabled:hover:bg-transparent disabled:hover:text-gray-500 transition-all duration-200"
         :disabled="currentPage === 1"
         @click="goToPage(currentPage - 1)"
       >
-        <span class="flex items-center gap-1">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
-          </svg>
-          上一页
-        </span>
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+        </svg>
       </button>
 
-      <div class="flex gap-2">
+      <div class="flex gap-1">
         <button
           v-for="page in visiblePages"
           :key="page"
-          class="w-10 h-10 rounded-xl border-2 transition-all font-medium shadow-sm"
+          class="w-10 h-10 rounded-lg font-medium text-sm transition-all duration-200"
           :class="
             page === currentPage
-              ? 'bg-gradient-to-r from-primary to-primary-600 text-white border-primary shadow-md scale-110'
-              : 'bg-white text-gray-700 border-gray-200 hover:bg-gray-50 hover:border-primary/30 hover:shadow-md'
+              ? 'bg-primary text-white shadow-md shadow-primary/30'
+              : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
           "
           @click="goToPage(page)"
         >
@@ -31,21 +28,18 @@
       </div>
 
       <button
-        class="px-5 py-2.5 rounded-xl border-2 border-gray-200 bg-white text-gray-700 hover:bg-gray-50 hover:border-primary/30 disabled:opacity-40 disabled:cursor-not-allowed transition-all font-medium shadow-sm hover:shadow-md"
+        class="w-10 h-10 flex items-center justify-center rounded-lg text-gray-500 hover:text-primary hover:bg-gray-50 disabled:opacity-30 disabled:hover:bg-transparent disabled:hover:text-gray-500 transition-all duration-200"
         :disabled="currentPage === totalPages"
         @click="goToPage(currentPage + 1)"
       >
-        <span class="flex items-center gap-1">
-          下一页
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-          </svg>
-        </span>
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+        </svg>
       </button>
     </div>
 
-    <span class="text-gray-500 text-sm font-medium">
-      共 <span class="text-primary font-semibold">{{ total }}</span> 条，第 <span class="text-primary font-semibold">{{ currentPage }}</span> / <span class="text-primary font-semibold">{{ totalPages }}</span> 页
+    <span class="text-gray-500 text-xs font-medium tracking-wide">
+      共 {{ total }} 条
     </span>
   </div>
 </template>

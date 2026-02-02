@@ -1,72 +1,83 @@
 <template>
-  <div class="border-l-4 border-primary/20 pl-5 py-4 bg-gray-50/50 rounded-r-lg mb-4 hover:bg-gray-50 transition-colors">
+  <div class="group">
     <!-- 评论主体 -->
-    <div class="mb-3">
-      <div class="flex items-center gap-3 mb-3">
-        <div class="w-8 h-8 bg-gradient-to-br from-primary-200 to-primary-300 rounded-full flex items-center justify-center text-primary-700 font-semibold text-xs">
-          {{ (reply.userName || `用户${reply.userId}`).charAt((reply.userName || `用户${reply.userId}`).length - 1) }}
+    <div class="flex gap-4 mb-4">
+      <!-- 头像 -->
+      <div class="flex-shrink-0">
+        <div class="relative w-10 h-10 bg-gray-50 rounded-full flex items-center justify-center text-primary font-bold text-sm ring-1 ring-gray-100 group-hover:ring-primary/20 transition-all">
+          {{ (reply.userName || `用户${reply.userId}`).charAt(0) }}
         </div>
-        <div class="flex-1">
-          <div class="flex items-center gap-2">
-            <span class="font-semibold text-gray-800">
+      </div>
+      
+      <!-- 内容 -->
+      <div class="flex-1">
+        <div class="bg-gray-50 rounded-[1.25rem] px-5 py-4 border border-gray-100 hover:border-gray-200 transition-colors inline-block min-w-[240px] max-w-full relative">
+          <div class="flex items-center gap-2 mb-1.5">
+            <span class="font-bold text-gray-900 text-sm tracking-wide">
               {{ reply.userName || `用户${reply.userId}` }}
             </span>
-            <span v-if="reply.targetUserName" class="text-gray-500 text-sm">
-              回复
-              <span class="text-primary font-medium">{{ reply.targetUserName }}</span>
+            <span v-if="reply.targetUserName" class="text-gray-400 text-xs flex items-center gap-1 font-medium">
+              <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+              </svg>
+              {{ reply.targetUserName }}
             </span>
           </div>
-          <div class="text-gray-400 text-xs mt-0.5">
-            {{ formatDate(reply.createdTime) }}
+          
+          <div class="text-gray-800 text-base leading-relaxed whitespace-pre-wrap font-normal">
+            {{ reply.content }}
           </div>
         </div>
-      </div>
-      <div class="text-gray-700 leading-relaxed whitespace-pre-wrap ml-11">
-        {{ reply.content }}
-      </div>
-      <!-- 评论图片 -->
-      <div v-if="reply.images && reply.images.length > 0" class="mt-3 ml-11 flex gap-2 flex-wrap">
-        <img
-          v-for="(img, index) in reply.images"
-          :key="index"
-          :src="img"
-          alt="评论图片"
-          class="w-28 h-28 object-cover rounded-lg cursor-pointer shadow-md hover:shadow-lg transition-all hover:scale-105"
-          @click="previewImage(img)"
-        />
-      </div>
-    </div>
 
-    <!-- 操作按钮 -->
-    <div class="flex items-center gap-4 text-sm ml-11">
-      <button
-        class="px-3 py-1.5 text-primary hover:bg-primary/10 rounded-lg transition-colors font-medium"
-        @click="showReplyForm = !showReplyForm"
-      >
-        {{ showReplyForm ? '取消回复' : '回复' }}
-      </button>
-    </div>
+        <!-- 底部操作栏 -->
+        <div class="flex items-center gap-4 mt-2 ml-4">
+          <span class="text-xs text-gray-400 font-medium">{{ formatDate(reply.createdTime) }}</span>
+          <button
+            class="text-xs font-bold text-gray-500 hover:text-primary transition-colors tracking-wide"
+            @click="showReplyForm = !showReplyForm"
+          >
+            {{ showReplyForm ? '取消' : '回复' }}
+          </button>
+        </div>
 
-    <!-- 回复表单 -->
-    <div v-if="showReplyForm" class="mt-4">
-      <ReplyForm
-        :post-id="postId"
-        :answer-id="reply.id"
-        :target-user-id="reply.userId"
-        :target-reply-id="reply.id"
-        @reply-success="handleReplySuccess"
-      />
-    </div>
+        <!-- 评论图片 -->
+        <div v-if="reply.images && reply.images.length > 0" class="mt-3 ml-2 flex gap-2 flex-wrap">
+          <div
+            v-for="(img, index) in reply.images"
+            :key="index"
+            class="relative w-24 h-24 rounded-xl overflow-hidden bg-gray-50 border border-gray-100 cursor-zoom-in hover:border-primary/30 transition-all"
+            @click="previewImage(img)"
+          >
+            <img
+              :src="img"
+              alt="评论图片"
+              class="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+            />
+          </div>
+        </div>
 
-    <!-- 子评论 -->
-    <div v-if="reply.children && reply.children.length > 0" class="mt-4 space-y-3">
-      <ReplyItem
-        v-for="child in reply.children"
-        :key="child.id"
-        :reply="child"
-        :post-id="postId"
-        @reply-success="$emit('replySuccess')"
-      />
+        <!-- 回复表单 -->
+        <div v-if="showReplyForm" class="mt-4 ml-2 animate-in slide-in-from-top-2 duration-200">
+          <ReplyForm
+            :post-id="postId"
+            :answer-id="reply.id"
+            :target-user-id="reply.userId"
+            :target-reply-id="reply.id"
+            @reply-success="handleReplySuccess"
+          />
+        </div>
+
+        <!-- 子评论 -->
+        <div v-if="reply.children && reply.children.length > 0" class="mt-4 pl-4 border-l-2 border-gray-100 space-y-4">
+          <ReplyItem
+            v-for="child in reply.children"
+            :key="child.id"
+            :reply="child"
+            :post-id="postId"
+            @reply-success="$emit('replySuccess')"
+          />
+        </div>
+      </div>
     </div>
   </div>
 </template>
