@@ -205,7 +205,7 @@ const props = defineProps<{
 }>()
 
 const emit = defineEmits<{
-  replySuccess: []
+  replySuccess: [refreshList?: boolean]
 }>()
 
 const showReplyForm = ref(false)
@@ -233,7 +233,8 @@ const previewImage = (imageUrl: string) => {
 // 处理回复成功
 const handleReplySuccess = () => {
   showReplyForm.value = false
-  emit('replySuccess')
+  // 传递 false，告诉父组件不要刷新一级列表
+  emit('replySuccess', false)
   
   // 如果之前没有子评论，现在有了，需要更新状态
   if (childTotal.value === 0) {
@@ -270,11 +271,14 @@ const openChildReplyForm = (child: Reply) => {
 // 处理子评论回复成功
 const handleChildReplySuccess = () => {
   activeChildReplyId.value = null
-  emit('replySuccess')
+  // 传递 false，告诉父组件不要刷新一级列表
+  emit('replySuccess', false)
   // 刷新子评论
   childPage.value = 1
   childReplies.value = []
   fetchChildReplies()
+  // 更新总数
+  childTotal.value++
 }
 
 // 获取子评论
@@ -286,7 +290,7 @@ const fetchChildReplies = async () => {
     const response = await getReplyList({
       postId: props.postId,
       answerId: props.reply.id,
-      current: childPage.value,
+      page: childPage.value,
       size: childPageSize,
     })
 
@@ -320,7 +324,7 @@ const checkHasChildren = async () => {
     const response = await getReplyList({
       postId: props.postId,
       answerId: props.reply.id,
-      current: 1,
+      page: 1,
       size: 1, // 只取1条来获取总数
     })
     if (response.code === 200 && response.data) {

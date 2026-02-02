@@ -4,7 +4,7 @@ import type { ApiResponse } from './user'
 
 // 分页查询参数
 export interface PageQueryDTO {
-  current?: number
+  page?: number
   size?: number
   keyword?: string
 }

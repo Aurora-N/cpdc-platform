@@ -137,7 +137,7 @@ const fetchPosts = async () => {
   loading.value = true
   try {
     const params: PageQueryDTO = {
-      current: currentPage.value,
+      page: currentPage.value,
       size: pageSize,
     }
     if (searchKeyword.value.trim()) {

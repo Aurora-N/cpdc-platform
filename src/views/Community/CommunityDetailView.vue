@@ -242,7 +242,7 @@ const fetchReplies = async (isLoadMore = false) => {
     const response = await getReplyList({
       postId: postId.value,
       answerId: 0,
-      current: page,
+      page: page,
       size: replyPageSize,
     })
 
@@ -322,9 +322,14 @@ const handleLike = async () => {
 }
 
 // 处理评论成功
-const handleReplySuccess = () => {
-  // 重新获取第一页评论
-  fetchReplies(false)
+const handleReplySuccess = (refreshList = true) => {
+  // 只有在发表一级评论，或者明确要求刷新时，才重载列表
+  if (refreshList) {
+    replyCurrentPage.value = 1
+    fetchReplies(false)
+  }
+  
+  // 无论如何都更新总评论数
   if (post.value) {
     post.value.replyCount += 1
   }
