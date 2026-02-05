@@ -48,18 +48,14 @@ export interface ExhibitionsResponse {
   code: number
   data: ExhibitionsData
   message: string
-  /**
-   * 总页数
-   */
-  p: number
-  /**
-   * 总
-   */
-  total: number
 }
 
 export interface ExhibitionsData {
   records: ExhibitionsRecord[]
+  total: number
+  pages: number
+  current: number
+  size: number
 }
 
 export interface ExhibitionsRecord {

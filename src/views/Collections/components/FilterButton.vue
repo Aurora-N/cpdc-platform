@@ -4,7 +4,7 @@
       class="bg-primary text-white w-[5rem] md:w-[8rem] text-md md:text-lg flex p-0.5 md:p-1 justify-center items-center hover:bg-primary-600 select-none cursor-pointer"
       @click="isListOpen = !isListOpen"
     >
-      <span class="w-4/5 text-center">{{ props.name }}</span>
+      <span class="w-4/5 text-center truncate px-1">{{ activeItemName || props.name }}</span>
       <div v-if="items && items.length > 0">
         <ArrowDown
           class="transition-transform duration-200 ease-out"
@@ -64,9 +64,17 @@ const props = defineProps<{
   items?: FilterItemType[]
 }>()
 
+const reset = () => {
+  if (props.items && props.items.length > 0) {
+    activeItemName.value = '' // 重置为空，显示 props.name
+    activeItemValue.value = props.items[0].value
+  }
+}
+
 defineExpose({
   activeItemName,
   activeItemValue,
+  reset,
 })
 
 const onBodyClick = (e: MouseEvent) => {
@@ -78,7 +86,9 @@ const onBodyClick = (e: MouseEvent) => {
 
 onMounted(() => {
   if (props.items && props.items.length > 0) {
-    activeItemName.value = props.items[0].name
+    // 默认选中第一个（通常是“全部”），但按钮上初始显示 props.name（如“时代”），直到用户主动选择
+    // 或者如果你想默认显示第一个选项的名字，可以取消注释下面这行：
+    // activeItemName.value = props.items[0].name
     activeItemValue.value = props.items[0].value
   }
   document.addEventListener('click', onBodyClick, true)

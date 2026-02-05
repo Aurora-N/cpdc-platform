@@ -32,6 +32,15 @@
           </div>
         </div>
       </div>
+
+      <!-- 分页 -->
+      <Pagination
+        v-if="totalPages > 1"
+        :current-page="pageCount"
+        :total-pages="totalPages"
+        :total="total"
+        @page-change="handlePageChange"
+      />
     </main>
   </div>
 </template>
@@ -40,6 +49,7 @@
 import HeroComponent from '@/components/Hero/HeroComponent.vue'
 import FilterButton from './components/FilterButton.vue'
 import SearchBar from './components/SearchBar.vue'
+import Pagination from '@/components/Pagination.vue'
 import { getExhibitions } from '@/apis/exhibitionApi'
 import { onMounted, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
@@ -85,21 +95,29 @@ const typeLists: FilterItemType[] = [
     value: undefined,
   },
   {
-    name: '大盘',
+    name: '纹盘',
     value: 1,
   },
   {
-    name: '纹盘',
+    name: '纹盆',
     value: 2,
   },
   {
-    name: '托盘',
+    name: '纹瓶',
     value: 3,
   },
   {
-    name: '纹瓶',
+    name: '纹碗',
     value: 4,
   },
+  {
+    name: '纹蝶',
+    value: 5,
+  },
+  {
+    name: '其他',
+    value: 6,
+  }
 ]
 
 const collectionsList = ref<ExhibitionsRecord[]>([])
@@ -108,9 +126,17 @@ const duringFilterRef = ref<InstanceType<typeof FilterButton>>()
 const typeFilterRef = ref<InstanceType<typeof FilterButton>>()
 
 const pageCount = ref(1)
+const totalPages = ref(0)
+const total = ref(0)
 
 const getCollectionsList = async () => {
   const keyword = searchBarRef.value ? searchBarRef.value.serachContent : undefined
+
+  // 如果存在 keyword，重置筛选条件
+  if (keyword) {
+    typeFilterRef.value?.reset()
+    duringFilterRef.value?.reset()
+  }
 
   const type = typeFilterRef.value?.activeItemValue as number | undefined
   const during = duringFilterRef.value?.activeItemValue as number | undefined
@@ -124,6 +150,14 @@ const getCollectionsList = async () => {
   )
 
   collectionsList.value = res.data.records
+  totalPages.value = res.data.pages
+  total.value = res.data.total
+}
+
+const handlePageChange = (page: number) => {
+  pageCount.value = page
+  window.scrollTo({ top: 0, behavior: 'smooth' })
+  getCollectionsList()
 }
 
 const goToDetail = (id: number) => {

@@ -115,7 +115,7 @@
 import { ref, onMounted } from 'vue'
 import HeroComponent from '@/components/Hero/HeroComponent.vue'
 import PostCard from './components/PostCard.vue'
-import Pagination from './components/Pagination.vue'
+import Pagination from '@/components/Pagination.vue'
 import PostModal from './components/PostModal.vue'
 import SearchIcon from '@/components/icons/SearchIcon.vue'
 import { getPostList } from '@/apis/postApi'
