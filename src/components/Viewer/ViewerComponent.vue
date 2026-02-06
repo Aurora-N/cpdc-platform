@@ -66,6 +66,7 @@ import { MarkersPlugin, type MarkerConfig } from '@photo-sphere-viewer/markers-p
 import { onMounted, ref } from 'vue'
 import { getVrHallDetail, getExhibitionDetail } from '@/apis/exhibitionApi'
 import type { VrHallDetailData, ExhibitionDetailData } from '@/types/api'
+import { parseImages } from '@/utils/formatUtils'
 
 declare global {
   interface Window {
@@ -128,14 +129,35 @@ function createHotspotElement(isVideo = false) {
 // 热点数据
 const markersData = ref<MarkerConfig[]>([])
 
-// 初始化Photo Sphere Viewer
-const initViewer = () => {
+  // 初始化Photo Sphere Viewer
+  const initViewer = () => {
   updateStatus('正在初始化Photo Sphere Viewer...')
+
+  // 根据 exhibitionId 映射全景图 URL
+  let panoramaUrl = props.panoramaUrl
+  if (props.id) {
+    switch (props.id) {
+      case 1:
+        panoramaUrl = 'https://goldseed.oss-cn-guangzhou.aliyuncs.com/goldSeed/exhibition/3.jpg'
+        break
+      case 2:
+        panoramaUrl = 'https://goldseed.oss-cn-guangzhou.aliyuncs.com/goldSeed/exhibition/1.jpg'
+        break
+      case 3:
+        panoramaUrl = 'https://goldseed.oss-cn-guangzhou.aliyuncs.com/goldSeed/exhibition/2.jpg'
+        break
+      default:
+        // 如果没有匹配的 ID，使用默认传入的 panoramaUrl 或回退到第一张
+        if (!panoramaUrl) {
+          panoramaUrl = 'https://goldseed.oss-cn-guangzhou.aliyuncs.com/goldSeed/exhibition/1.jpg'
+        }
+    }
+  }
 
   try {
     viewer = new Viewer({
       container: document.getElementById('viewer')!,
-      panorama: props.panoramaUrl,
+      panorama: panoramaUrl, // 使用映射后的 URL
       caption: props.caption,
       navbar: ['zoom', 'move', 'fullscreen'],
       plugins: [[MarkersPlugin, {}]],
@@ -445,31 +467,18 @@ onMounted(async () => {
     const vrHallDetailRes = await getVrHallDetail(props.id || 1)
 
     // 确保数据存在且格式正确
-    if (!vrHallDetailRes.data?.records || !Array.isArray(vrHallDetailRes.data.records)) {
+    if (!vrHallDetailRes.data || !Array.isArray(vrHallDetailRes.data)) {
       throw new Error('热点数据格式不正确')
     }
 
-    const hotSpotData = vrHallDetailRes.data.records
+    const hotSpotData = vrHallDetailRes.data
 
     // 记录热点数量
     console.log('获取到热点数量:', hotSpotData.length)
 
     const markerPromises = hotSpotData.map(async (hotspot) => {
-      let exhibitionDetail: ExhibitionDetailData | null = null
-
-      if (hotspot.exhibitionId) {
-        try {
-          const exhibitRes = await getExhibitionDetail(hotspot.exhibitionId)
-          if (exhibitRes.data) {
-            exhibitionDetail = exhibitRes.data
-          }
-        } catch (exhibitError) {
-          console.error(
-            `获取展品详情失败 ID ${hotspot.exhibitionId}:`,
-            exhibitError,
-          )
-        }
-      }
+      // 获取清洗后的图片 URL
+      const hotspotImage = hotspot.image ? parseImages(hotspot.image)[0] : ''
 
       return {
         id: `marker-${hotspot.id}`,
@@ -478,12 +487,12 @@ onMounted(async () => {
           pitch: hotspot.pitch || 0
         },
         html: createHotspotElement(false).outerHTML,
-        tooltip: exhibitionDetail?.name || '展品热点',
+        tooltip: '点击查看详情',
         data: {
-          title: exhibitionDetail?.title || '未知展品',
-          body: exhibitionDetail?.content || '暂无详细介绍',
-          type: exhibitionDetail?.image ? 'image' : 'text',
-          imageUrl: exhibitionDetail?.image || hotspot.image, // 如果展品详情没有图片，使用热点图片
+          title: '展品详情',
+          body: '',
+          type: 'image',
+          imageUrl: hotspotImage, 
         },
       } as MarkerConfig
     })

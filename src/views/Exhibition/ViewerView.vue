@@ -1,13 +1,30 @@
 <script setup lang="ts">
 import ViewerComponent from '@/components/Viewer/ViewerComponent.vue'
+import { useRoute } from 'vue-router'
+import { computed } from 'vue'
+
+const route = useRoute()
+const id = computed(() => Number(route.params.id))
+
+const caption = computed(() => {
+  switch (id.value) {
+    case 1:
+      return '工坊主题展厅'
+    case 2:
+      return '发展脉络展厅'
+    case 3:
+      return '华彩新章展厅'
+    default:
+      return '展厅'
+  }
+})
 </script>
 
 <template>
   <div class="w-full h-[calc(100vh-5rem)] relative">
     <ViewerComponent
-      :id="1"
-      caption="第一展厅"
-      panorama-url="/cpdc-platform/exhibition/panorama/ex1.png"
+      :id="id"
+      :caption="caption"
     />
   </div>
 </template>

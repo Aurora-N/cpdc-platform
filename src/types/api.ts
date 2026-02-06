@@ -28,10 +28,7 @@ export interface VrHallRecord {
 export interface VrHallDetailResponse {
   code: number;
   msg: string;
-  data: {
-    url: string;
-    records: VrHallDetailData[];
-  };
+  data: VrHallDetailData[];
 }
 
 export interface VrHallDetailData {
