@@ -1,6 +1,7 @@
 // 帖子相关类型定义
 
 import type { ApiResponse } from './user'
+export type { ApiResponse }
 
 // 分页查询参数
 export interface PageQueryDTO {

@@ -48,7 +48,7 @@ const handleLike = async () => {
   }
 
   // 记录原始状态用于回滚
-  const originalLiked = props.post.isLiked
+  const originalLiked = !!props.post.isLiked
   const originalLikedTimes = props.post.likedTimes
 
   // 乐观更新

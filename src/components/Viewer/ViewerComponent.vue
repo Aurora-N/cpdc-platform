@@ -94,7 +94,7 @@ const props = defineProps({
   },
   debugMode: {
     type: Boolean,
-    default: true,
+    default: false,
   },
 })
 
@@ -492,7 +492,7 @@ onMounted(async () => {
           title: '展品详情',
           body: '',
           type: 'image',
-          imageUrl: hotspotImage, 
+          imageUrl: hotspotImage,
         },
       } as MarkerConfig
     })
