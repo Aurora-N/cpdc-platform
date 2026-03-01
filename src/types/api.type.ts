@@ -25,21 +25,17 @@ export interface VrHallRecord {
 
 // 获取展厅热点数据
 export interface VrHallDetailResponse {
-  code: number
-  data: VrHallDetailData[]
-  message: string
+  code: number;
+  msg: string;
+  data: VrHallDetailData[];
 }
 
 export interface VrHallDetailData {
-  /**
-   * 全景图
-   */
-  id: number
-  exhibitionId: number
-  url: string
-  image: string
-  pitch: number
-  yaw: number
+  id: number;
+  exhibitionId: number;
+  yaw: number;
+  pitch: number;
+  image: string;
 }
 
 // 获取展品响应
@@ -47,18 +43,14 @@ export interface ExhibitionsResponse {
   code: number
   data: ExhibitionsData
   message: string
-  /**
-   * 总页数
-   */
-  p: number
-  /**
-   * 总
-   */
-  total: number
 }
 
 export interface ExhibitionsData {
   records: ExhibitionsRecord[]
+  total: number
+  pages: number
+  current: number
+  size: number
 }
 
 export interface ExhibitionsRecord {

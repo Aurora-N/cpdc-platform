@@ -64,7 +64,7 @@ const getSearchSuggestions = debounce(async (value: string) => {
     console.error('获取搜索建议失败:', error)
     suggestions.value = []
   }
-}, 1000)
+}, 100)
 
 const onInput = () => {
   getSearchSuggestions(serachContent.value)

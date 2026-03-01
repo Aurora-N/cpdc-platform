@@ -1,4 +1,5 @@
-import axios from 'axios'
+import axios from "axios";
+import router from "@/router";
 
 // axios实例
 const apiClient = axios.create({
@@ -12,15 +13,37 @@ const apiClient = axios.create({
 
 // 拦截器
 // axios请求拦截器
-apiClient.interceptors.request
-  .use
-  // TODO: 拼接token
-  ()
+apiClient.interceptors.request.use(
+  (config) => {
+    // 从 localStorage 获取 token
+    const token = localStorage.getItem('token')
+    if (token) {
+      // 添加 token 到请求头
+      config.headers['token'] = token
+    }
+    return config
+  },
+  (error) => {
+    return Promise.reject(error)
+  }
+)
 
 // axios响应式拦截器
 apiClient.interceptors.response.use(
-  // 成功的回调：直接返回 res.data
-  (res) => res.data,
+  // 成功的回调
+  (res) => {
+    // 检查业务状态码
+    const data = res.data
+    // 如果返回体包含 code 且不为 200，视为业务错误，抛出异常
+    if (data && typeof data.code !== 'undefined' && data.code !== 200) {
+      const message = data.message || data.msg || '操作失败'
+      return Promise.reject({
+        message,
+        response: { data }
+      })
+    }
+    return data
+  },
   // 失败的回调
   (e) => {
     let message = '发生未知错误'
@@ -33,9 +56,38 @@ apiClient.interceptors.response.use(
           message = e.response.data.msg || '请求参数错误'
           break
         case 401:
-          message = '未授权，请重新登录'
-          // 在这里可以执行跳转到登录页等操作
-          break
+          message = '未授权，请重新登录';
+          // 清除用户信息
+          try {
+            // 动态导入 userStore，避免循环依赖
+            import('@/stores/userStore').then(({ useUserStore }) => {
+              const userStore = useUserStore()
+              userStore.clearUserInfo()
+            })
+          } catch (error) {
+            // 如果导入失败，直接清除 localStorage
+            console.error('清除用户状态失败:', error)
+          }
+          // 无论如何都清除 localStorage
+          localStorage.removeItem('token')
+          localStorage.removeItem('userId')
+          localStorage.removeItem('userName')
+
+          // 跳转到登录页，并保存当前路径
+          const currentPath = router.currentRoute.value.fullPath
+          // 避免在登录页重复跳转
+          if (currentPath !== '/login') {
+            router.replace({
+              path: '/login',
+              query: { redirect: currentPath }
+            }).catch(err => {
+              // 忽略导航重复错误
+              if (err.name !== 'NavigationDuplicated') {
+                console.error('导航错误:', err)
+              }
+            })
+          }
+          break;
         case 403:
           message = '禁止访问'
           break
@@ -55,8 +107,7 @@ apiClient.interceptors.response.use(
     }
 
     // 统一显示错误提示
-    console.error(message)
-    // TODO: 待显示错误提示组件完成后，接入message
+    console.error('API Error:', message)
 
     // 继续抛出错误，以便业务代码中的 .catch() 能捕获到
     return Promise.reject(e)
