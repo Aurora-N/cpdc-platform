@@ -1,18 +1,18 @@
 <template>
   <div class="flex flex-col">
     <div
-      class="border-2 border-primary bg-primary/70 text-white w-[8rem] text-lg flex justify-center items-center focus-within:w-[16rem] ease-in-out duration-200"
+      class="border-primary bg-primary/70 flex w-[8rem] items-center justify-center border-2 text-lg text-white duration-200 ease-in-out focus-within:w-[16rem]"
     >
       <input
         type="text"
         placeholder="搜索"
-        class="flex-1 w-[calc(100%-2rem)] outline-0 px-2"
+        class="w-[calc(100%-2rem)] flex-1 px-2 outline-0"
         v-model="serachContent"
         @input="onInput"
         @keyup.enter="handleSerach"
       />
       <div
-        class="w-[2rem] bg-primary h-[2rem] flex justify-center items-center hover:bg-primary-600 cursor-pointer"
+        class="bg-primary hover:bg-primary-600 flex h-[2rem] w-[2rem] cursor-pointer items-center justify-center"
         @click="handleSerach"
       >
         <SearchIcon />
@@ -23,13 +23,13 @@
       <Transition name="slide-down">
         <div
           v-if="suggestions.length > 0 && serachContent"
-          class="absolute visible z-50 top-2 w-[16rem]"
+          class="visible absolute top-2 z-50 w-[16rem]"
         >
           <div class="my-backdrop-blur-lg">
             <div
               v-for="(suggestion, index) in suggestions"
               :key="index"
-              class="text-md text-primary-100 px-3 md:px-5 py-2 flex items-center justify-between hover:text-white hover:bg-primary-300/30"
+              class="text-md text-primary-100 hover:bg-primary-300/30 flex items-center justify-between px-3 py-2 hover:text-white md:px-5"
               @click="selectSuggestion(suggestion)"
             >
               <span v-html="suggestion"></span>

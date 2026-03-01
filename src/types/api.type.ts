@@ -23,7 +23,6 @@ export interface VrHallRecord {
   image: string
 }
 
-
 // 获取展厅热点数据
 export interface VrHallDetailResponse {
   code: number;
@@ -38,7 +37,6 @@ export interface VrHallDetailData {
   pitch: number;
   image: string;
 }
-
 
 // 获取展品响应
 export interface ExhibitionsResponse {

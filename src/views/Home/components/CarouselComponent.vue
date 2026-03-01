@@ -12,13 +12,13 @@
       <div
         v-for="(image, index) in images"
         :key="index"
-        class="carousel-item min-w-full h-full"
+        class="carousel-item h-full min-w-full"
         :style="{ width: `${containerWidth}px` }"
       >
         <img
           :src="image.src"
           :alt="image.alt || `Slide ${index + 1}`"
-          class="w-full h-full object-cover object-bottom"
+          class="h-full w-full object-cover object-bottom"
           draggable="false"
         />
       </div>
@@ -27,7 +27,7 @@
     <!-- 左右切换按钮 -->
     <button
       @click="prevSlide"
-      class="carousel-control left absolute top-1/2 left-2 transform -translate-y-1/2 bg-black/30 hover:bg-black/50 text-white rounded-full p-2 transition-opacity duration-300"
+      class="carousel-control left absolute top-1/2 left-2 -translate-y-1/2 transform rounded-full bg-black/30 p-2 text-white transition-opacity duration-300 hover:bg-black/50"
       :class="{ 'opacity-0': !isHovering, 'opacity-100': isHovering }"
       aria-label="上一张"
     >
@@ -36,7 +36,7 @@
 
     <button
       @click="nextSlide"
-      class="carousel-control right absolute top-1/2 right-2 transform -translate-y-1/2 bg-black/30 hover:bg-black/50 text-white rounded-full p-2 transition-opacity duration-300"
+      class="carousel-control right absolute top-1/2 right-2 -translate-y-1/2 transform rounded-full bg-black/30 p-2 text-white transition-opacity duration-300 hover:bg-black/50"
       :class="{ 'opacity-0': !isHovering, 'opacity-100': isHovering }"
       aria-label="下一张"
     >
@@ -45,13 +45,13 @@
 
     <!-- 底部指示器 -->
     <div
-      class="carousel-indicators absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2"
+      class="carousel-indicators absolute bottom-4 left-1/2 flex -translate-x-1/2 transform space-x-2"
     >
       <button
         v-for="(_, index) in images"
         :key="index"
         @click="goToSlide(index)"
-        class="w-3 h-3 rounded-full transition-all duration-300"
+        class="h-3 w-3 rounded-full transition-all duration-300"
         :class="index === currentIndex ? 'bg-primary scale-110' : 'bg-white/50 hover:bg-white/70'"
         :aria-label="`转到第 ${index + 1} 张图片`"
       ></button>

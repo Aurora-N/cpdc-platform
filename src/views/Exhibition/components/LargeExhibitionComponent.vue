@@ -1,14 +1,14 @@
 <template>
-  <div class="flex justify-center items-center w-3/5 h-full flex-col">
+  <div class="flex h-full w-3/5 flex-col items-center justify-center">
     <div
-      class="bg-primary-300 text-white text-2xl font-semibold py-2 px-4 flex justify-center items-center mb-3 w-60"
+      class="bg-primary-300 mb-3 flex w-60 items-center justify-center px-4 py-2 text-2xl font-semibold text-white"
     >
       {{ props.data.name }}
     </div>
-    <div class="flex flex-row justify-between items-center w-full">
+    <div class="flex w-full flex-row items-center justify-between">
       <ArrowLeft class="w-[15%] text-gray-200 hover:text-gray-300" />
       <img
-        class="rounded-full bg-gray-300 aspect-square w-[70%]"
+        class="aspect-square w-[70%] rounded-full bg-gray-300"
         :src="props.data.img.src"
         :alt="props.data.img.alt"
       />

@@ -21,7 +21,7 @@ const caption = computed(() => {
 </script>
 
 <template>
-  <div class="w-full h-[calc(100vh-5rem)] relative">
+  <div class="relative h-[calc(100vh-5rem)] w-full">
     <ViewerComponent
       :id="id"
       :caption="caption"

@@ -1,7 +1,7 @@
 <template>
   <div class="flex flex-col" ref="rootEl">
     <div
-      class="bg-primary text-white w-[5rem] md:w-[8rem] text-md md:text-lg flex p-0.5 md:p-1 justify-center items-center hover:bg-primary-600 select-none cursor-pointer"
+      class="bg-primary text-md hover:bg-primary-600 flex w-[5rem] cursor-pointer items-center justify-center p-0.5 text-white select-none md:w-[8rem] md:p-1 md:text-lg"
       @click="isListOpen = !isListOpen"
     >
       <span class="w-4/5 text-center truncate px-1">{{ activeItemName || props.name }}</span>
@@ -16,12 +16,12 @@
     <!-- 下拉菜单 -->
     <div class="relative">
       <Transition name="slide-down">
-        <div v-if="isListOpen" class="absolute visible z-50 top-2 w-[calc(100vw-2rem)] md:w-100">
+        <div v-if="isListOpen" class="visible absolute top-2 z-50 w-[calc(100vw-2rem)] md:w-100">
           <div class="my-backdrop-blur-lg">
             <div
               v-for="item of items"
-              class="text-md text-primary-100 px-3 md:px-5 py-2 flex items-center justify-between hover:text-white hover:bg-primary-300/30"
-              :class="activeItemName === item.name ? 'text-white bg-primary-300/50' : ''"
+              class="text-md text-primary-100 hover:bg-primary-300/30 flex items-center justify-between px-3 py-2 hover:text-white md:px-5"
+              :class="activeItemName === item.name ? 'bg-primary-300/50 text-white' : ''"
               :key="item.name"
               :title="item.name"
               @click="setActiveItem(item)"

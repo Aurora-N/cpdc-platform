@@ -3,8 +3,8 @@ import type {
   ExhibitionsResponse,
   SearchSuggestionResponse,
   VrHallResponse,
-  VrHallDetailResponse
-} from '@/types/api'
+  VrHallDetailResponse,
+} from '@/types/api.type'
 import apiClient from '@/utils/apiClient'
 
 // 展厅接口
