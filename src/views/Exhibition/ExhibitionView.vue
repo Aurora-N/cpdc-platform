@@ -37,18 +37,18 @@ const exhibitionDataList: ExhibitionDataType[] = [
     link: '2',
   },
   {
-    name: '工坊主题展厅',
+    name: '华彩新章展厅',
     img: {
       src: '/cpdc-platform/exhibition/1.png',
-      alt: '工坊主题展厅',
+      alt: '华彩新章展厅',
     },
     link: '1',
   },
   {
-    name: '华彩新章展厅',
+    name: '工坊主题展厅',
     img: {
       src: '/cpdc-platform/exhibition/3.png',
-      alt: '华彩新章展厅',
+      alt: '工坊主题展厅',
     },
     link: '3',
   },
