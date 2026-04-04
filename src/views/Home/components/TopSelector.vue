@@ -4,7 +4,7 @@
     <svg
       ref="curveSvg"
       width="100%"
-      height="auto"
+      height="100%"
       viewBox="0 0 1440 61"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
@@ -164,6 +164,11 @@ function moveTo(index: number, isEmit = true): void {
 
   const duration = Math.abs(targetProgress - currentProgress) + 0.5
 
+  activeIndex.value = index
+  if (isEmit) {
+    emit('Indexchange', index, duration)
+  }
+
   gsap.to(focusCircle.value, {
     duration, // 动画时长
     ease: 'power2.inOut', // 平滑缓动
@@ -179,12 +184,8 @@ function moveTo(index: number, isEmit = true): void {
       // 这里不直接取 currentProgress，因为 MotionPathPlugin 内部会管理位置
     },
     onComplete() {
-      activeIndex.value = index
       currentProgress = targetProgress
       isAnimating = false
-      if (isEmit) {
-        emit('Indexchange', index)
-      }
     },
   })
 }

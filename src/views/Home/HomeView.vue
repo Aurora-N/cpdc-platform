@@ -7,12 +7,16 @@
   />
   <main class="hero-background">
     <HistoryGallery />
+    <MasterArtisan />
+    <GloriousNewChapter />
   </main>
 </template>
 
 <script setup lang="ts">
 import CarouselComponent from '@/views/Home/components/CarouselComponent.vue'
 import HistoryGallery from './components/HistoryGallery.vue'
+import MasterArtisan from './components/MasterArtisan.vue'
+import GloriousNewChapter from './components/GloriousNewChapter.vue'
 
 const images = [
   {

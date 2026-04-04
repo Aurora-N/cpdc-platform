@@ -18,6 +18,9 @@
   /* secondary */
   --color-secondary-600: #95928a;
   --color-secondary: #c7bab1;
+  /* 装饰背景色 */
+  --color-decoration-bg: #cd9c8a;
+  --color-decoration-text: #f6f1ed;
 }
 
 /* 透明磨砂背景 */
