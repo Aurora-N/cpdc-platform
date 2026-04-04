@@ -12,18 +12,18 @@ export interface HistoryGallerySection {
 
 export const themeColors = [
   '#45695d', // 深绿色
+  '#846244', // 棕色
   '#93443f', // 深红色
   '#ad9445', // 金黄色
-  '#846244', // 棕色
   '#483e51', // 深紫色
   '#4e6070', // 蓝灰色
 ]
 
 export const secondaryThemeColors = [
   '#839991', // 浅绿色
+  '#a99177', // 浅棕色
   '#998683', // 浅红色
   '#ada98d', // 浅黄色
-  '#a99177', // 浅棕色
   '#7a77a9', // 浅紫色
   '#779da9', // 浅蓝色
 ]

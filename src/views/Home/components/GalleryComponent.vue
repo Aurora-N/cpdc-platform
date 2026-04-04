@@ -6,7 +6,7 @@
     <!-- 左箭头 -->
     <div
       @click="prev"
-      class="absolute top-[45%] left-0 z-40 flex -translate-y-1/2 cursor-pointer transition hover:opacity-80 md:left-4 lg:left-6"
+      class="absolute top-[45%] left-0 z-40 flex -translate-y-1/2 cursor-pointer transition hover:opacity-80 md:left-4"
     >
       <ArrowLeft class="text-decoration-bg h-10 w-10 md:h-16 md:w-16" />
     </div>
@@ -23,15 +23,22 @@
         <div
           class="h-[10rem] w-[16rem] overflow-hidden rounded-[3rem] md:h-[18rem] md:w-[28rem] md:rounded-[6rem]"
         >
+          <img
+            v-show="activeIndex !== index || !isVideoLoaded"
+            :src="resource.cover"
+            :alt="resource.alt"
+            class="h-full w-full object-cover"
+          />
           <video
             v-if="activeIndex === index"
+            v-show="isVideoLoaded"
+            @loadeddata="isVideoLoaded = true"
             :src="resource.src"
             class="h-full w-full bg-transparent object-cover"
             autoplay
             loop
             muted
           />
-          <img :src="resource.cover" :alt="resource.alt" class="h-full w-full object-cover" />
         </div>
         <div
           class="bg-decoration-bg text-decoration-text m-auto mt-4 w-fit rounded-full px-5 py-2 text-center text-sm font-semibold md:mt-8 md:px-8 md:py-3 md:text-2xl"
@@ -44,7 +51,7 @@
     <!-- 右箭头 -->
     <div
       @click="next"
-      class="absolute top-[45%] right-0 z-40 flex -translate-y-1/2 cursor-pointer transition hover:opacity-80 md:right-4 lg:right-6"
+      class="absolute top-[45%] right-0 z-40 flex -translate-y-1/2 cursor-pointer transition hover:opacity-80 md:right-4"
     >
       <ArrowRight class="text-decoration-bg h-10 w-10 md:h-16 md:w-16" />
     </div>
@@ -53,7 +60,7 @@
 
 <script setup lang="ts">
 import type { ImageType } from '@/types/ui'
-import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
 import ArrowLeft from '@/components/icons/ArrowLeft.vue'
 import ArrowRight from '@/components/icons/ArrowRight.vue'
 
@@ -94,6 +101,11 @@ const props = defineProps({
 })
 
 const activeIndex = ref(0)
+const isVideoLoaded = ref(false)
+
+watch(activeIndex, () => {
+  isVideoLoaded.value = false
+})
 
 const next = () => {
   activeIndex.value = (activeIndex.value + 1) % props.resources.length
