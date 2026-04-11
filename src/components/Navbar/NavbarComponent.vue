@@ -26,7 +26,7 @@
       </div>
       <!-- 用户图标 -->
       <div
-        class="text-2xl text-primary-100 px-3 py-2 flex items-center justify-center rounded-sm hover:text-white hover:bg-primary-200 ease-in-out duration-200 cursor-pointer"
+        class="text-primary-100 hover:bg-primary-200 flex cursor-pointer items-center justify-center rounded-sm px-3 py-2 text-2xl duration-200 ease-in-out hover:text-white"
         :title="userStore.isLoggedIn ? '个人中心' : '登录 / 注册'"
         @click="handleUserIconClick"
       >
@@ -38,7 +38,7 @@
     <div class="flex items-center gap-2 lg:hidden">
       <!-- 移动端用户图标 -->
       <div
-        class="text-2xl text-primary-100 p-1 flex items-center justify-center cursor-pointer"
+        class="text-primary-100 flex cursor-pointer items-center justify-center p-1 text-2xl"
         :title="userStore.isLoggedIn ? '个人中心' : '登录 / 注册'"
         @click="handleUserIconClick"
       >
@@ -90,33 +90,12 @@ import NavMenu from '@/components/icons/NavMenu.vue'
 import NavMenuClose from '@/components/icons/NavMenuClose.vue'
 import UserIcon from '@/components/icons/UserIcon.vue'
 import { useUserStore } from '@/stores/userStore'
+import { navItem } from '@/data/navigation'
 
 const route = useRoute()
 const userStore = useUserStore()
 
 const selectedItemLink = ref<string>('/')
-
-const navItem: NavItemType[] = [
-  {
-    name: '社区互动',
-    link: '/community',
-    subitems: [],
-  },
-  {
-    name: '展厅',
-    link: '/exhibition_hall',
-    subitems: [],
-  },
-  {
-    name: '藏品库',
-    link: '/collections',
-    subitems: [],
-  },
-  {
-    name: '首页',
-    link: '/',
-  },
-]
 
 const setActiveItem = (item: NavItemType) => {
   selectedItemLink.value = item.link
@@ -136,7 +115,7 @@ const handleUserIconClick = () => {
     // 未登录，跳转到登录页面，并保存当前路径
     router.push({
       path: '/login',
-      query: { redirect: route.fullPath }
+      query: { redirect: route.fullPath },
     })
   }
   isMobileMenuOpen.value = false
