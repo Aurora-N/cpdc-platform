@@ -81,7 +81,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
+import { ref, watch } from 'vue'
 import router from '@/router/index'
 import { useRoute } from 'vue-router'
 import type { NavItemType } from '@/types/ui'
@@ -97,8 +97,17 @@ const userStore = useUserStore()
 
 const selectedItemLink = ref<string>('/')
 
+// 监听路由变化，使高亮状态和当前真实路由匹配
+watch(
+  () => route.path,
+  (newPath) => {
+    const match = navItem.find((item) => item.link !== '/' && newPath.startsWith(item.link))
+    selectedItemLink.value = match ? match.link : '/'
+  },
+  { immediate: true },
+)
+
 const setActiveItem = (item: NavItemType) => {
-  selectedItemLink.value = item.link
   router.push(item.link)
   isMobileMenuOpen.value = false
 }
@@ -120,12 +129,4 @@ const handleUserIconClick = () => {
   }
   isMobileMenuOpen.value = false
 }
-
-onMounted(() => {
-  router.isReady().then(() => {
-    const currentPath = route.path
-    console.log(currentPath)
-    selectedItemLink.value = currentPath
-  })
-})
 </script>
