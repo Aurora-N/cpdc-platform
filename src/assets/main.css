@@ -18,6 +18,10 @@
   /* secondary */
   --color-secondary-600: #95928a;
   --color-secondary: #c7bab1;
+  /* 华彩新章自定义颜色 */
+  --color-glorious-text: #c29589;
+  --color-glorious-subtitle: #b77d6e;
+  --color-glorious-title: #ab6553;
   /* 装饰背景色 */
   --color-decoration-bg: #cd9c8a;
   --color-decoration-text: #f6f1ed;

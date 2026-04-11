@@ -18,7 +18,7 @@
         :key="index"
         class="absolute flex cursor-pointer flex-col items-center transition-all duration-500 ease-in-out"
         :style="getItemStyle(index)"
-        @click="activeIndex = index"
+        @click="openPreview(resource.src || resource.cover, index)"
       >
         <div
           class="h-[10rem] w-[16rem] overflow-hidden rounded-[3rem] md:h-[18rem] md:w-[28rem] md:rounded-[6rem]"
@@ -28,6 +28,7 @@
             :src="resource.cover"
             :alt="resource.alt"
             class="h-full w-full object-cover"
+            @click.stop="openPreview(resource.src || resource.cover, index)"
           />
           <video
             v-if="activeIndex === index"
@@ -38,6 +39,7 @@
             autoplay
             loop
             muted
+            @click.stop="openPreview(resource.src, index)"
           />
         </div>
         <div
@@ -55,6 +57,9 @@
     >
       <ArrowRight class="text-decoration-bg h-10 w-10 md:h-16 md:w-16" />
     </div>
+
+    <!-- 引入全屏预览组件 -->
+    <ImagePreview v-model:visible="isPreviewVisible" :image-url="previewMediaUrl" />
   </div>
 </template>
 
@@ -63,6 +68,7 @@ import type { ImageType } from '@/types/ui'
 import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
 import ArrowLeft from '@/components/icons/ArrowLeft.vue'
 import ArrowRight from '@/components/icons/ArrowRight.vue'
+import ImagePreview from '@/components/ImagePreview.vue'
 
 // 响应式获取视口宽度以便动态调整间距
 const windowWidth = ref(1024)
@@ -102,6 +108,18 @@ const props = defineProps({
 
 const activeIndex = ref(0)
 const isVideoLoaded = ref(false)
+
+const isPreviewVisible = ref(false)
+const previewMediaUrl = ref('')
+
+const openPreview = (url: string | undefined, index: number) => {
+  if (activeIndex.value === index && url) {
+    previewMediaUrl.value = url
+    isPreviewVisible.value = true
+  } else {
+    activeIndex.value = index
+  }
+}
 
 watch(activeIndex, () => {
   isVideoLoaded.value = false
