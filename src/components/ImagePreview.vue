@@ -20,6 +20,18 @@
       </svg>
     </button>
 
+    <!-- 文本信息 -->
+    <div
+      v-if="title || description"
+      class="pointer-events-none absolute bottom-24 left-1/2 z-[101] w-[90%] max-w-2xl -translate-x-1/2 rounded-2xl bg-black/60 p-6 text-center text-white/90 backdrop-blur-xl md:bottom-8 md:left-8 md:-translate-x-0 md:text-left"
+    >
+      <h3 v-if="title" class="text-xl font-bold tracking-wider text-white">{{ title }}</h3>
+      <p v-if="attribute" class="mt-2 text-sm font-medium text-white/60">{{ attribute }}</p>
+      <p v-if="description" class="mt-3 text-base leading-relaxed text-white/80">
+        {{ description }}
+      </p>
+    </div>
+
     <!-- 底部控制栏 -->
     <div
       class="absolute bottom-8 left-1/2 z-[101] flex -translate-x-1/2 items-center gap-4 rounded-full bg-black/50 px-6 py-3 backdrop-blur-md"
@@ -116,6 +128,9 @@ import { ref, watch, computed } from 'vue'
 const props = defineProps<{
   visible: boolean
   imageUrl: string
+  title?: string
+  attribute?: string
+  description?: string
 }>()
 
 const emit = defineEmits<{
