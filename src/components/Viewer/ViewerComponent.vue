@@ -76,6 +76,17 @@ interface ArtifactMarkerData {
 
 type MarkerPayload = NavigationMarkerData | ArtifactMarkerData
 
+interface ManualArtifactSpot {
+  id: string
+  nodeId: string
+  title: string
+  imagePath: string
+  position: {
+    yaw: AngleValue
+    pitch: AngleValue
+  }
+}
+
 const props = defineProps({
   id: {
     type: Number,
@@ -91,7 +102,7 @@ const props = defineProps({
   },
   debugMode: {
     type: Boolean,
-    default: false,
+    default: true,
   },
 })
 
@@ -101,6 +112,171 @@ const currentSceneConfig = ref<HallSceneConfig | null>(null)
 const currentNodeId = ref('')
 const isSwitching = ref(false)
 const artifactMarkers = ref<MarkerConfig[]>([])
+
+const manualArtifactSpotMap = new Map<number, ManualArtifactSpot[]>([
+  [
+    2,
+    [
+      {
+        id: 'n1-ex1-1',
+        nodeId: 'n1',
+        title: '图文资料 1',
+        imagePath: 'exhibition/exhibition1/1.png',
+        position: { yaw: 3.667188263456417, pitch: 0.3337821738533089 },
+      },
+      {
+        id: 'n1-ex1-2',
+        nodeId: 'n1',
+        title: '图文资料 2',
+        imagePath: 'exhibition/exhibition1/2.png',
+        position: { yaw: 6.004076366918024, pitch: 0.29184301075112984 },
+      },
+      {
+        id: 'n1-ex1-3',
+        nodeId: 'n1',
+        title: '图文资料 3',
+        imagePath: 'exhibition/exhibition1/3.png',
+        position: { yaw: 1.5223379745108323, pitch: 0.3584058394379823 },
+      },
+      {
+        id: 'n2-ex1-4',
+        nodeId: 'n2',
+        title: '图文资料 4',
+        imagePath: 'exhibition/exhibition1/4.png',
+        position: { yaw: 3.708887628190194, pitch: 0.21392179469566952 },
+      },
+      {
+        id: 'n2-ex1-5',
+        nodeId: 'n2',
+        title: '图文资料 5',
+        imagePath: 'exhibition/exhibition1/5.png',
+        position: { yaw: 4.860968247333351, pitch: 0.14831474918549126 },
+      },
+      {
+        id: 'n2-ex1-6',
+        nodeId: 'n2',
+        title: '图文资料 6',
+        imagePath: 'exhibition/exhibition1/6.png',
+        position: { yaw: 0.32882555325018153, pitch: 0.317510702691139 },
+      },
+    ],
+  ],
+  [
+    1,
+    [
+      {
+        id: 'main-ex2-1',
+        nodeId: 'main',
+        title: '图文资料 1',
+        imagePath: 'exhibition/exhibition2/1.jpg',
+        position: { yaw: 0.5617954955008074, pitch: 0.08436720806290166 },
+      },
+      {
+        id: 'main-ex2-2',
+        nodeId: 'main',
+        title: '图文资料 2',
+        imagePath: 'exhibition/exhibition2/2.jpg',
+        position: { yaw: 0.7592753910205858, pitch: 0.07811422278657187 },
+      },
+      {
+        id: 'main-ex2-3',
+        nodeId: 'main',
+        title: '图文资料 3',
+        imagePath: 'exhibition/exhibition2/3.jpg',
+        position: { yaw: 1.0533078514411653, pitch: 0.06451896479979546 },
+      },
+      {
+        id: 'main-ex2-4',
+        nodeId: 'main',
+        title: '图文资料 4',
+        imagePath: 'exhibition/exhibition2/4.jpg',
+        position: { yaw: 1.398479568602795, pitch: 0.09751837942262909 },
+      },
+      {
+        id: 'main-ex2-5',
+        nodeId: 'main',
+        title: '图文资料 5',
+        imagePath: 'exhibition/exhibition2/5.jpg',
+        position: { yaw: 1.8793169674025354, pitch: 0.09900527397286996 },
+      },
+      {
+        id: 'main-ex2-6',
+        nodeId: 'main',
+        title: '图文资料 6',
+        imagePath: 'exhibition/exhibition2/6.jpg',
+        position: { yaw: 2.2478033485385485, pitch: 0.08428543123593868 },
+      },
+      {
+        id: 'main-ex2-7',
+        nodeId: 'main',
+        title: '图文资料 7',
+        imagePath: 'exhibition/exhibition2/7.jpg',
+        position: { yaw: 2.524668339871991, pitch: 0.14875594186864305 },
+      },
+    ],
+  ],
+  [
+    3,
+    [
+      {
+        id: 'main-ex3-1',
+        nodeId: 'main',
+        title: '图文资料 1',
+        imagePath: 'exhibition/exhibition3/1.png',
+        position: { yaw: 1.0718435115362304, pitch: 0.15519464001033034 },
+      },
+      {
+        id: 'main-ex3-2',
+        nodeId: 'main',
+        title: '图文资料 2',
+        imagePath: 'exhibition/exhibition3/2.png',
+        position: { yaw: 1.4704584068388542, pitch: 0.2101822026318465 },
+      },
+      {
+        id: 'main-ex3-3',
+        nodeId: 'main',
+        title: '图文资料 3',
+        imagePath: 'exhibition/exhibition3/3.png',
+        position: { yaw: 1.8848122077054872, pitch: 0.19148851972190473 },
+      },
+      {
+        id: 'main-ex3-4',
+        nodeId: 'main',
+        title: '图文资料 4',
+        imagePath: 'exhibition/exhibition3/4.png',
+        position: { yaw: 2.1994398222365685, pitch: 0.09861668631014409 },
+      },
+      {
+        id: 'main-ex3-5',
+        nodeId: 'main',
+        title: '图文资料 5',
+        imagePath: 'exhibition/exhibition3/5.png',
+        position: { yaw: 2.3837302438967884, pitch: 0.14912498620458425 },
+      },
+      {
+        id: 'main-ex3-6',
+        nodeId: 'main',
+        title: '图文资料 6',
+        imagePath: 'exhibition/exhibition3/6.png',
+        position: { yaw: 2.6926819678035523, pitch: 0.1679555961488517 },
+      },
+      {
+        id: 'main-ex3-7',
+        nodeId: 'main',
+        title: '图文资料 7',
+        imagePath: 'exhibition/exhibition3/7.png',
+        position: { yaw: 3.0486880789516855, pitch: 0.1665677704429409 },
+      },
+      {
+        id: 'main-ex3-8',
+        nodeId: 'main',
+        title: '图文资料 8',
+        imagePath: 'exhibition/exhibition3/8.png',
+        position: { yaw: 3.334161210816938, pitch: 0.23082969252925767 },
+      },
+    ],
+  ],
+])
 
 const hallId = computed(() => Number(props.id || 1))
 const currentNode = computed(() => {
@@ -177,6 +353,21 @@ function createNavigationMarkerHtml(label: string, rotation: number): string {
       <span class="psv-nav-marker__core"></span>
     </div>
   `
+}
+
+function createArtifactMarkerHtml(): string {
+  return `
+    <div class="psv-artifact-marker">
+      <span class="psv-artifact-marker__ring"></span>
+      <span class="psv-artifact-marker__dot"></span>
+    </div>
+  `
+}
+
+function resolvePublicAssetUrl(assetPath: string): string {
+  const base = import.meta.env.BASE_URL || '/'
+  const normalizedBase = base.endsWith('/') ? base : `${base}/`
+  return `${normalizedBase}${assetPath}`
 }
 
 function buildNavigationMarkers(node: PanoramaNodeConfig): MarkerConfig[] {
@@ -262,8 +453,33 @@ function bindDebugTracker() {
 }
 
 async function loadArtifactMarkers() {
-  // 当前版本统一禁用后端热点请求，仅保留导航箭头。
-  artifactMarkers.value = []
+  if (!currentSceneConfig.value) {
+    artifactMarkers.value = []
+    return
+  }
+
+  const hallSpots = manualArtifactSpotMap.get(currentSceneConfig.value.hallId) ?? []
+  const nodeSpots = hallSpots.filter((spot) => spot.nodeId === currentNodeId.value)
+
+  artifactMarkers.value = nodeSpots.map((spot) => ({
+    id: `artifact-${currentSceneConfig.value!.hallId}-${spot.id}`,
+    position: {
+      yaw: normalizeAngle(spot.position.yaw),
+      pitch: normalizeAngle(spot.position.pitch),
+    },
+    anchor: 'center center',
+    html: createArtifactMarkerHtml(),
+    size: {
+      width: 38,
+      height: 38,
+    },
+    tooltip: `点击查看${spot.title}`,
+    data: {
+      kind: 'artifact',
+      title: spot.title,
+      imageUrl: resolvePublicAssetUrl(spot.imagePath),
+    } satisfies ArtifactMarkerData,
+  }))
 }
 
 async function moveInsideScene(targetNodeId: string) {
@@ -296,6 +512,7 @@ async function moveInsideScene(targetNodeId: string) {
     }
 
     currentNodeId.value = targetNode.nodeId
+    await loadArtifactMarkers()
     await rebuildMarkers()
   } catch (error) {
     console.error('场景切换失败:', error)
@@ -531,6 +748,38 @@ onUnmounted(() => {
   background: radial-gradient(circle, rgba(91, 255, 255, 0.45) 0%, rgba(22, 111, 255, 0.15) 45%, rgba(5, 15, 40, 0) 75%);
 }
 
+.psv-artifact-marker {
+  position: relative;
+  width: 38px;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  pointer-events: auto;
+}
+
+.psv-artifact-marker__ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 9999px;
+  border: 2px solid rgba(255, 227, 155, 0.95);
+  background: radial-gradient(circle, rgba(255, 225, 138, 0.4) 0%, rgba(255, 160, 66, 0.32) 50%, rgba(255, 126, 70, 0.08) 100%);
+  box-shadow:
+    0 0 14px rgba(255, 182, 85, 0.76),
+    inset 0 0 10px rgba(255, 245, 225, 0.34);
+  animation: artifact-pulse 1.5s ease-in-out infinite;
+}
+
+.psv-artifact-marker__dot {
+  position: relative;
+  width: 10px;
+  height: 10px;
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.98);
+  box-shadow: 0 0 12px rgba(255, 255, 255, 0.96);
+}
+
 @keyframes nav-halo-pulse {
   0% {
     transform: scale(0.96);
@@ -543,6 +792,18 @@ onUnmounted(() => {
   100% {
     transform: scale(0.96);
     opacity: 0.72;
+  }
+}
+
+@keyframes artifact-pulse {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 0.92;
+  }
+  50% {
+    transform: scale(1.18);
+    opacity: 1;
   }
 }
 </style>
