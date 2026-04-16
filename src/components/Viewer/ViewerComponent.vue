@@ -19,7 +19,11 @@
       <div v-if="coordinateHistory.length === 0" class="text-xs text-white/70">
         点击全景任意区域可记录当前视角坐标
       </div>
-      <div v-for="(coord, index) in coordinateHistory" :key="`${coord.timestamp}-${index}`" class="mb-2 rounded bg-white/10 p-2 text-xs">
+      <div
+        v-for="(coord, index) in coordinateHistory"
+        :key="`${coord.timestamp}-${index}`"
+        class="mb-2 rounded bg-white/10 p-2 text-xs"
+      >
         <div class="font-medium">点击 {{ index + 1 }} ({{ coord.timestamp }})</div>
         <div class="text-[11px] text-white/70">
           yaw: {{ toDegrees(coord.yaw) }}°, pitch: {{ toDegrees(coord.pitch) }}°
@@ -41,6 +45,165 @@
         清空坐标
       </button>
     </div>
+
+    <div
+      v-if="activeImageModal"
+      class="absolute inset-0 z-[9999] flex items-center justify-center bg-[radial-gradient(circle_at_18%_10%,rgba(42,70,108,0.38),rgba(4,10,18,0.94))] p-2 sm:p-4"
+      @click.self="closeArtifactModal"
+    >
+      <div
+        class="relative flex h-[96vh] w-full max-w-[1660px] flex-col overflow-hidden rounded-[24px] border border-[#d8b986]/22 bg-[linear-gradient(158deg,rgba(8,20,36,0.96),rgba(6,14,25,0.96))] text-white shadow-[0_24px_95px_rgba(0,0,0,0.62)] backdrop-blur-[8px] sm:h-[94vh]"
+      >
+        <div
+          class="pointer-events-none absolute inset-x-0 top-0 h-20 bg-[linear-gradient(to_bottom,rgba(246,208,138,0.08),rgba(246,208,138,0))]"
+        />
+        <button
+          class="absolute top-4 right-4 z-20 flex h-10 w-10 cursor-pointer items-center justify-center rounded-full border border-white/16 bg-black/45 text-[22px] text-white/80 transition hover:border-white/36 hover:bg-black/65 hover:text-white"
+          aria-label="关闭资料图"
+          @click="closeArtifactModal"
+        >
+          ×
+        </button>
+
+        <div
+          class="relative flex items-start justify-between gap-4 border-b border-[#d8b986]/16 px-5 py-4 pr-20 sm:px-6 sm:py-5"
+        >
+          <div class="min-w-0">
+            <div
+              class="inline-flex items-center rounded-full border border-[#d8b986]/28 bg-[#d8b986]/9 px-3 py-[3px] text-[11px] tracking-[0.14em] text-[#e4cfab]"
+            >
+              展厅资料
+            </div>
+            <div
+              class="mt-2 truncate font-['Noto_Serif_SC',serif] text-[25px] leading-none font-semibold tracking-[0.08em] text-[#f6e6c9] sm:text-[28px]"
+            >
+              {{ activeImageModal.title }}
+            </div>
+            <div class="mt-2 text-sm text-white/66">
+              {{
+                activeHotspots.length > 0
+                  ? '点击图中瓷器查看完整介绍，移动端可直接使用下方列表。'
+                  : '当前资料图仅支持查看大图。'
+              }}
+            </div>
+          </div>
+          <div
+            v-if="activeHotspots.length > 0"
+            class="hidden shrink-0 rounded-full border border-[#d8b986]/32 bg-[#d8b986]/10 px-4 py-[5px] text-xs tracking-[0.12em] text-[#f1ddb9] sm:block"
+          >
+            热点 {{ activeHotspots.length }}
+          </div>
+        </div>
+
+        <div
+          class="grid min-h-0 flex-1"
+          :class="activeHotspots.length > 0 ? 'lg:grid-cols-[minmax(0,1fr)_350px]' : ''"
+        >
+          <div class="relative min-h-0 overflow-auto bg-[#050f1c] p-3 sm:p-5">
+            <div
+              class="relative mx-auto w-fit max-w-full rounded-[18px] border border-[#d8b986]/20 bg-[#0a1626] p-2 shadow-[0_18px_48px_rgba(0,0,0,0.45)] sm:p-3"
+            >
+              <img
+                :src="activeImageModal.imageUrl"
+                :alt="activeImageModal.title"
+                class="block max-h-[74vh] max-w-full rounded-xl object-contain"
+              />
+
+              <button
+                v-for="(hotspot, index) in activeHotspots"
+                :key="hotspot.id"
+                :style="getHotspotStyle(hotspot)"
+                class="hotspot-hit-area group absolute -translate-x-1/2 -translate-y-1/2 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-[#ffe9b5] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0d1b2a]"
+                :class="{ 'is-active': activeHotspotId === hotspot.id }"
+                :aria-label="`查看 ${hotspot.artifact.title}`"
+                :title="hotspot.artifact.title"
+                @click.stop="selectArtifactHotspot(hotspot.id)"
+              >
+                <span class="hotspot-hit-area__frame" />
+                <span class="hotspot-hit-area__pin">
+                  {{ index + 1 }}
+                </span>
+                <span class="hotspot-hit-area__label">
+                  {{ hotspot.artifact.title }}
+                </span>
+              </button>
+            </div>
+
+            <div
+              v-if="activeHotspots.length > 0"
+              class="pointer-events-none absolute right-5 bottom-4 rounded-full border border-[#d8b986]/28 bg-[#081524]/78 px-3 py-1 text-[11px] tracking-[0.08em] text-[#e4cfaa]"
+            >
+              轻触编号查看详情
+            </div>
+          </div>
+
+          <div
+            v-if="activeHotspots.length > 0"
+            class="flex min-h-0 flex-col border-t border-[#d8b986]/14 bg-[#0b1b2d]/94 backdrop-blur-sm lg:border-t-0 lg:border-l"
+          >
+            <div class="border-b border-[#d8b986]/14 px-5 py-4 text-sm text-[#e9dcc2]">
+              <div class="text-[11px] tracking-[0.14em] text-[#ccb38f]">
+                {{ activeArtifactDescription ? '当前藏品' : '藏品导览' }}
+              </div>
+              <div class="mt-2 text-base font-semibold tracking-[0.06em] text-[#f6e8d0]">
+                {{ activeArtifactDescription ? activeArtifactDescription.title : '请选择一个瓷器' }}
+              </div>
+              <button
+                v-if="activeArtifactDescription"
+                class="mt-3 cursor-pointer rounded-full border border-[#ccb38f]/35 px-3 py-1 text-xs text-[#f1e2c7] transition hover:border-[#f1d6a4]/65 hover:bg-[#d8b986]/10 hover:text-[#ffe9bf]"
+                @click="clearSelectedArtifact"
+              >
+                取消选中
+              </button>
+            </div>
+
+            <div class="min-h-0 flex-1 overflow-y-auto px-5 py-5">
+              <div
+                v-if="activeArtifactDescription"
+                class="text-[14px] leading-7 whitespace-pre-line text-[#f5f1e8] sm:text-[15px]"
+              >
+                {{ activeArtifactDescription.content }}
+              </div>
+              <div
+                v-else
+                class="rounded-2xl border border-[#d8b986]/18 bg-[#091726]/72 p-4 text-[13px] leading-6 text-white/68"
+              >
+                点击左侧图片里的编号热点，或在下方列表选择一个器物，这里会显示完整介绍。
+              </div>
+            </div>
+
+            <div class="border-t border-[#d8b986]/14 px-4 py-3">
+              <div class="mb-2 px-1 text-xs tracking-[0.1em] text-[#c6af8d]">器物列表</div>
+              <div class="max-h-[30vh] space-y-2 overflow-y-auto pr-1">
+                <button
+                  v-for="(hotspot, index) in activeHotspots"
+                  :key="`list-${hotspot.id}`"
+                  class="flex w-full cursor-pointer items-center gap-3 rounded-xl border px-3 py-2 text-left text-sm transition-colors"
+                  :class="
+                    activeHotspotId === hotspot.id
+                      ? 'border-[#e6c995]/70 bg-[#cda76d]/15 text-[#f7e4be]'
+                      : 'border-[#d8b986]/16 bg-[#11283f]/44 text-white/76 hover:border-[#d8b986]/40 hover:bg-[#15334f]/62'
+                  "
+                  @click="selectArtifactHotspot(hotspot.id)"
+                >
+                  <span
+                    class="flex h-6 w-6 items-center justify-center rounded-full text-xs font-semibold"
+                    :class="
+                      activeHotspotId === hotspot.id
+                        ? 'bg-[#f2d7a8] text-[#513a1e]'
+                        : 'bg-[#e2c28d]/16 text-[#f2d9ad]'
+                    "
+                  >
+                    {{ index + 1 }}
+                  </span>
+                  <span class="truncate">{{ hotspot.artifact.title }}</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -48,6 +211,12 @@
 import { Viewer } from '@photo-sphere-viewer/core'
 import { MarkersPlugin, type MarkerConfig } from '@photo-sphere-viewer/markers-plugin'
 import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
+import {
+  getExhibition1InteractiveImageConfig,
+  type ArtifactHotspot,
+  type Exhibition1InteractiveImageKey,
+  type InteractiveImageConfig,
+} from '@/data/exhibition1InteractiveImages'
 import {
   getHallSceneConfig,
   getNodeConfig,
@@ -72,6 +241,7 @@ interface ArtifactMarkerData {
   title: string
   body?: string
   imageUrl?: string
+  interactiveImageKey?: Exhibition1InteractiveImageKey
 }
 
 type MarkerPayload = NavigationMarkerData | ArtifactMarkerData
@@ -81,10 +251,17 @@ interface ManualArtifactSpot {
   nodeId: string
   title: string
   imagePath: string
+  interactiveImageKey?: Exhibition1InteractiveImageKey
   position: {
     yaw: AngleValue
     pitch: AngleValue
   }
+}
+
+interface ArtifactImageModalState {
+  title: string
+  imageUrl: string
+  interactiveImage: InteractiveImageConfig | null
 }
 
 const props = defineProps({
@@ -112,6 +289,8 @@ const currentSceneConfig = ref<HallSceneConfig | null>(null)
 const currentNodeId = ref('')
 const isSwitching = ref(false)
 const artifactMarkers = ref<MarkerConfig[]>([])
+const activeImageModal = ref<ArtifactImageModalState | null>(null)
+const activeHotspotId = ref<string | null>(null)
 
 const manualArtifactSpotMap = new Map<number, ManualArtifactSpot[]>([
   [
@@ -122,6 +301,7 @@ const manualArtifactSpotMap = new Map<number, ManualArtifactSpot[]>([
         nodeId: 'n1',
         title: '图文资料 1',
         imagePath: 'exhibition/exhibition1/1.png',
+        interactiveImageKey: 'exhibition1-1',
         position: { yaw: 3.667188263456417, pitch: 0.3337821738533089 },
       },
       {
@@ -129,6 +309,7 @@ const manualArtifactSpotMap = new Map<number, ManualArtifactSpot[]>([
         nodeId: 'n1',
         title: '图文资料 2',
         imagePath: 'exhibition/exhibition1/2.png',
+        interactiveImageKey: 'exhibition1-2',
         position: { yaw: 6.004076366918024, pitch: 0.29184301075112984 },
       },
       {
@@ -136,6 +317,7 @@ const manualArtifactSpotMap = new Map<number, ManualArtifactSpot[]>([
         nodeId: 'n1',
         title: '图文资料 3',
         imagePath: 'exhibition/exhibition1/3.png',
+        interactiveImageKey: 'exhibition1-3',
         position: { yaw: 1.5223379745108323, pitch: 0.3584058394379823 },
       },
       {
@@ -143,6 +325,7 @@ const manualArtifactSpotMap = new Map<number, ManualArtifactSpot[]>([
         nodeId: 'n2',
         title: '图文资料 4',
         imagePath: 'exhibition/exhibition1/4.png',
+        interactiveImageKey: 'exhibition1-4',
         position: { yaw: 3.708887628190194, pitch: 0.21392179469566952 },
       },
       {
@@ -150,6 +333,7 @@ const manualArtifactSpotMap = new Map<number, ManualArtifactSpot[]>([
         nodeId: 'n2',
         title: '图文资料 5',
         imagePath: 'exhibition/exhibition1/5.png',
+        interactiveImageKey: 'exhibition1-5',
         position: { yaw: 4.860968247333351, pitch: 0.14831474918549126 },
       },
       {
@@ -157,6 +341,7 @@ const manualArtifactSpotMap = new Map<number, ManualArtifactSpot[]>([
         nodeId: 'n2',
         title: '图文资料 6',
         imagePath: 'exhibition/exhibition1/6.png',
+        interactiveImageKey: 'exhibition1-6',
         position: { yaw: 0.32882555325018153, pitch: 0.317510702691139 },
       },
     ],
@@ -283,6 +468,13 @@ const currentNode = computed(() => {
   if (!currentSceneConfig.value || !currentNodeId.value) return null
   return getNodeConfig(currentSceneConfig.value, currentNodeId.value) ?? null
 })
+const activeHotspots = computed(() => activeImageModal.value?.interactiveImage?.hotspots ?? [])
+const activeArtifactDescription = computed(() => {
+  if (!activeHotspotId.value) return null
+  return (
+    activeHotspots.value.find((hotspot) => hotspot.id === activeHotspotId.value)?.artifact ?? null
+  )
+})
 
 const showFogMask = computed(() => {
   return Boolean(currentSceneConfig.value?.blackHoleMitigation?.enabled)
@@ -368,6 +560,15 @@ function resolvePublicAssetUrl(assetPath: string): string {
   const base = import.meta.env.BASE_URL || '/'
   const normalizedBase = base.endsWith('/') ? base : `${base}/`
   return `${normalizedBase}${assetPath}`
+}
+
+function getHotspotStyle(hotspot: ArtifactHotspot) {
+  return {
+    left: `${hotspot.x}%`,
+    top: `${hotspot.y}%`,
+    width: `${hotspot.width}%`,
+    height: `${hotspot.height}%`,
+  }
 }
 
 function buildNavigationMarkers(node: PanoramaNodeConfig): MarkerConfig[] {
@@ -478,6 +679,7 @@ async function loadArtifactMarkers() {
       kind: 'artifact',
       title: spot.title,
       imageUrl: resolvePublicAssetUrl(spot.imagePath),
+      interactiveImageKey: spot.interactiveImageKey,
     } satisfies ArtifactMarkerData,
   }))
 }
@@ -522,35 +724,43 @@ async function moveInsideScene(targetNodeId: string) {
 }
 
 function showArtifactModal(data: ArtifactMarkerData) {
-  const modal = document.createElement('div')
-  modal.className = 'fixed inset-0 z-[9999] flex items-center justify-center bg-black/90 p-4'
+  const interactiveImage = getExhibition1InteractiveImageConfig(data.interactiveImageKey ?? null)
+  const imageUrl =
+    data.imageUrl || (interactiveImage ? resolvePublicAssetUrl(interactiveImage.imagePath) : '')
+  if (!imageUrl) return
 
-  const content = document.createElement('div')
-  content.className = 'relative max-h-[95vh] max-w-[95vw] overflow-hidden'
+  activeImageModal.value = {
+    title: interactiveImage?.title ?? data.title,
+    imageUrl,
+    interactiveImage,
+  }
+  activeHotspotId.value = null
+}
 
-  const closeButton = document.createElement('button')
-  closeButton.className =
-    'absolute top-2 right-2 z-10 flex h-10 w-10 cursor-pointer items-center justify-center rounded-full border-none bg-black/55 text-2xl text-white/80 hover:text-white'
-  closeButton.innerHTML = '×'
-  closeButton.onclick = () => modal.remove()
-  content.appendChild(closeButton)
+function closeArtifactModal() {
+  activeHotspotId.value = null
+  activeImageModal.value = null
+}
 
-  if (data.imageUrl) {
-    const img = document.createElement('img')
-    img.src = data.imageUrl
-    img.alt = data.title || '展品图片'
-    img.className = 'max-h-[95vh] max-w-full object-contain'
-    content.appendChild(img)
+function selectArtifactHotspot(hotspotId: string) {
+  activeHotspotId.value = hotspotId
+}
+
+function clearSelectedArtifact() {
+  activeHotspotId.value = null
+}
+
+function handleGlobalKeydown(event: KeyboardEvent) {
+  if (event.key !== 'Escape') return
+
+  if (activeHotspotId.value) {
+    clearSelectedArtifact()
+    return
   }
 
-  modal.appendChild(content)
-  viewerContainer.value?.appendChild(modal)
-
-  modal.addEventListener('click', (event) => {
-    if (event.target === modal) {
-      modal.remove()
-    }
-  })
+  if (activeImageModal.value) {
+    closeArtifactModal()
+  }
 }
 
 function bindMarkerEvents() {
@@ -579,8 +789,7 @@ async function initViewer() {
   const sceneConfig = resolveSceneConfig()
   currentSceneConfig.value = sceneConfig
 
-  const entryNode =
-    getNodeConfig(sceneConfig, sceneConfig.entryNodeId) ??
+  const entryNode = getNodeConfig(sceneConfig, sceneConfig.entryNodeId) ??
     sceneConfig.nodes[0] ?? {
       nodeId: 'default',
       panoramaUrl: props.panoramaUrl,
@@ -621,6 +830,7 @@ async function initViewer() {
 }
 
 function destroyViewer() {
+  closeArtifactModal()
   if (viewer) {
     viewer.destroy()
     viewer = null
@@ -656,16 +866,19 @@ function clearCoordinates() {
 watch(
   () => props.id,
   async () => {
+    closeArtifactModal()
     destroyViewer()
     await initViewer()
   },
 )
 
 onMounted(async () => {
+  document.addEventListener('keydown', handleGlobalKeydown)
   await initViewer()
 })
 
 onUnmounted(() => {
+  document.removeEventListener('keydown', handleGlobalKeydown)
   destroyViewer()
 })
 </script>
@@ -688,7 +901,12 @@ onUnmounted(() => {
   width: 100%;
   height: 100%;
   border-radius: 9999px;
-  background: radial-gradient(circle, rgba(91, 255, 255, 0.35) 0%, rgba(22, 111, 255, 0.1) 45%, rgba(5, 15, 40, 0) 75%);
+  background: radial-gradient(
+    circle,
+    rgba(91, 255, 255, 0.35) 0%,
+    rgba(22, 111, 255, 0.1) 45%,
+    rgba(5, 15, 40, 0) 75%
+  );
   filter: blur(0.6px);
   animation: nav-halo-pulse 2.2s ease-in-out infinite;
 }
@@ -734,7 +952,12 @@ onUnmounted(() => {
   width: 16px;
   height: 16px;
   border-radius: 9999px;
-  background: radial-gradient(circle, rgba(183, 255, 255, 1) 0%, rgba(55, 198, 255, 0.95) 45%, rgba(38, 121, 255, 0.78) 100%);
+  background: radial-gradient(
+    circle,
+    rgba(183, 255, 255, 1) 0%,
+    rgba(55, 198, 255, 0.95) 45%,
+    rgba(38, 121, 255, 0.78) 100%
+  );
   box-shadow:
     0 0 13px rgba(99, 244, 255, 0.92),
     0 0 22px rgba(75, 140, 255, 0.66);
@@ -745,7 +968,12 @@ onUnmounted(() => {
 }
 
 .psv-nav-marker:hover .psv-nav-marker__halo {
-  background: radial-gradient(circle, rgba(91, 255, 255, 0.45) 0%, rgba(22, 111, 255, 0.15) 45%, rgba(5, 15, 40, 0) 75%);
+  background: radial-gradient(
+    circle,
+    rgba(91, 255, 255, 0.45) 0%,
+    rgba(22, 111, 255, 0.15) 45%,
+    rgba(5, 15, 40, 0) 75%
+  );
 }
 
 .psv-artifact-marker {
@@ -764,7 +992,12 @@ onUnmounted(() => {
   inset: 0;
   border-radius: 9999px;
   border: 2px solid rgba(255, 227, 155, 0.95);
-  background: radial-gradient(circle, rgba(255, 225, 138, 0.4) 0%, rgba(255, 160, 66, 0.32) 50%, rgba(255, 126, 70, 0.08) 100%);
+  background: radial-gradient(
+    circle,
+    rgba(255, 225, 138, 0.4) 0%,
+    rgba(255, 160, 66, 0.32) 50%,
+    rgba(255, 126, 70, 0.08) 100%
+  );
   box-shadow:
     0 0 14px rgba(255, 182, 85, 0.76),
     inset 0 0 10px rgba(255, 245, 225, 0.34);
@@ -804,6 +1037,155 @@ onUnmounted(() => {
   50% {
     transform: scale(1.18);
     opacity: 1;
+  }
+}
+
+@keyframes image-hotspot-breathe {
+  0%,
+  100% {
+    opacity: 0.88;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.06);
+  }
+}
+
+.hotspot-hit-area {
+  min-width: 44px;
+  min-height: 44px;
+  border-radius: 18px;
+  background: transparent;
+}
+
+.hotspot-hit-area::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 34px;
+  height: 34px;
+  border-radius: 9999px;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(
+    circle,
+    rgba(255, 214, 134, 0.28) 0%,
+    rgba(255, 190, 96, 0.12) 48%,
+    rgba(255, 190, 96, 0) 100%
+  );
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  pointer-events: none;
+}
+
+.hotspot-hit-area__frame {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  border: 1px solid rgba(255, 218, 151, 0.45);
+  background: rgba(255, 221, 158, 0.06);
+  box-shadow: inset 0 0 0 1px rgba(255, 240, 205, 0.08);
+  opacity: 0;
+  transform: scale(0.94);
+  transition:
+    opacity 0.22s ease,
+    transform 0.22s ease,
+    border-color 0.22s ease;
+}
+
+.hotspot-hit-area__pin {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 9999px;
+  transform: translate(-50%, -50%);
+  border: 1px solid rgba(255, 235, 194, 0.88);
+  background: radial-gradient(
+    circle,
+    rgba(253, 245, 224, 0.98) 0%,
+    rgba(244, 201, 128, 0.9) 55%,
+    rgba(168, 117, 50, 0.88) 100%
+  );
+  color: rgba(59, 34, 13, 0.92);
+  font-size: 11px;
+  font-weight: 700;
+  box-shadow: 0 0 18px rgba(245, 199, 117, 0.42);
+  animation: image-hotspot-breathe 2.3s ease-in-out infinite;
+  transition:
+    transform 0.22s ease,
+    box-shadow 0.22s ease,
+    border-color 0.22s ease;
+}
+
+.hotspot-hit-area__label {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  z-index: 3;
+  max-width: 250px;
+  transform: translate(-50%, calc(-50% - 31px));
+  border: 1px solid rgba(247, 221, 175, 0.44);
+  border-radius: 9999px;
+  background: rgba(6, 18, 32, 0.92);
+  color: #fae7c2;
+  padding: 5px 11px;
+  white-space: nowrap;
+  font-size: 12px;
+  line-height: 1.2;
+  letter-spacing: 0.03em;
+  opacity: 0;
+  pointer-events: none;
+  transition:
+    opacity 0.2s ease,
+    transform 0.2s ease;
+}
+
+.hotspot-hit-area:hover .hotspot-hit-area__frame,
+.hotspot-hit-area.is-active .hotspot-hit-area__frame {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.hotspot-hit-area:hover::after,
+.hotspot-hit-area.is-active::after {
+  opacity: 1;
+}
+
+.hotspot-hit-area:hover .hotspot-hit-area__label,
+.hotspot-hit-area.is-active .hotspot-hit-area__label {
+  opacity: 1;
+  transform: translate(-50%, calc(-50% - 34px));
+}
+
+.hotspot-hit-area:hover .hotspot-hit-area__pin,
+.hotspot-hit-area.is-active .hotspot-hit-area__pin {
+  transform: translate(-50%, -50%) scale(1.12);
+  box-shadow:
+    0 0 0 7px rgba(245, 210, 145, 0.16),
+    0 0 24px rgba(248, 208, 130, 0.64);
+}
+
+@media (max-width: 640px) {
+  .hotspot-hit-area {
+    min-width: 52px;
+    min-height: 52px;
+  }
+
+  .hotspot-hit-area__pin {
+    width: 28px;
+    height: 28px;
+    font-size: 12px;
+  }
+
+  .hotspot-hit-area__label {
+    display: none;
   }
 }
 </style>
