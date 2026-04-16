@@ -31,7 +31,7 @@ const exhibitionDataList: ExhibitionDataType[] = [
   {
     name: '发展脉络展厅',
     img: {
-      src: '/cpdc-platform/exhibition/2.png',
+      src: '/cpdc-platform/exhibition/home_1.png',
       alt: '发展脉络展厅',
     },
     link: '2',
@@ -39,7 +39,7 @@ const exhibitionDataList: ExhibitionDataType[] = [
   {
     name: '华彩新章展厅',
     img: {
-      src: '/cpdc-platform/exhibition/1.png',
+      src: '/cpdc-platform/exhibition/home_2.png',
       alt: '华彩新章展厅',
     },
     link: '1',
@@ -47,7 +47,7 @@ const exhibitionDataList: ExhibitionDataType[] = [
   {
     name: '工坊主题展厅',
     img: {
-      src: '/cpdc-platform/exhibition/3.png',
+      src: '/cpdc-platform/exhibition/home_3.png',
       alt: '工坊主题展厅',
     },
     link: '3',
