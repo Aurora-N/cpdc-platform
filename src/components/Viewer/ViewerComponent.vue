@@ -102,7 +102,7 @@ const props = defineProps({
   },
   debugMode: {
     type: Boolean,
-    default: true,
+    default: false,
   },
 })
 
@@ -162,61 +162,61 @@ const manualArtifactSpotMap = new Map<number, ManualArtifactSpot[]>([
     ],
   ],
   [
-    1,
+    3,
     [
       {
         id: 'main-ex2-1',
         nodeId: 'main',
         title: '图文资料 1',
         imagePath: 'exhibition/exhibition2/1.jpg',
-        position: { yaw: 0.5617954955008074, pitch: 0.08436720806290166 },
+        position: { yaw: 1.1307016599338002, pitch: 0.14357341807960156 },
       },
       {
         id: 'main-ex2-2',
         nodeId: 'main',
         title: '图文资料 2',
         imagePath: 'exhibition/exhibition2/2.jpg',
-        position: { yaw: 0.7592753910205858, pitch: 0.07811422278657187 },
+        position: { yaw: 1.419795303717428, pitch: 0.15054129406525418 },
       },
       {
         id: 'main-ex2-3',
         nodeId: 'main',
         title: '图文资料 3',
         imagePath: 'exhibition/exhibition2/3.jpg',
-        position: { yaw: 1.0533078514411653, pitch: 0.06451896479979546 },
+        position: { yaw: 1.7678585932181141, pitch: 0.1213400802235225 },
       },
       {
         id: 'main-ex2-4',
         nodeId: 'main',
         title: '图文资料 4',
         imagePath: 'exhibition/exhibition2/4.jpg',
-        position: { yaw: 1.398479568602795, pitch: 0.09751837942262909 },
+        position: { yaw: 2.052851250080195, pitch: 0.10534457477345716 },
       },
       {
         id: 'main-ex2-5',
         nodeId: 'main',
         title: '图文资料 5',
         imagePath: 'exhibition/exhibition2/5.jpg',
-        position: { yaw: 1.8793169674025354, pitch: 0.09900527397286996 },
+        position: { yaw: 2.3213817015066427, pitch: 0.0969647139251344 },
       },
       {
         id: 'main-ex2-6',
         nodeId: 'main',
         title: '图文资料 6',
         imagePath: 'exhibition/exhibition2/6.jpg',
-        position: { yaw: 2.2478033485385485, pitch: 0.08428543123593868 },
+        position: { yaw: 2.4749212706368855, pitch: 0.0981226191400566 },
       },
       {
         id: 'main-ex2-7',
         nodeId: 'main',
         title: '图文资料 7',
         imagePath: 'exhibition/exhibition2/7.jpg',
-        position: { yaw: 2.524668339871991, pitch: 0.14875594186864305 },
+        position: { yaw: 2.598697648073065, pitch: 0.09434216729778644 },
       },
     ],
   ],
   [
-    3,
+    1,
     [
       {
         id: 'main-ex3-1',
