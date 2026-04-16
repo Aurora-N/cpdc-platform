@@ -48,17 +48,12 @@
 
     <div
       v-if="activeImageModal"
-      class="absolute inset-0 z-[9999] flex items-center justify-center bg-[radial-gradient(circle_at_18%_10%,rgba(42,70,108,0.38),rgba(4,10,18,0.94))] p-2 sm:p-4"
+      class="absolute inset-0 z-[9999] flex items-center justify-center bg-[rgba(246,240,232,0.18)] p-3 backdrop-blur-[2px] sm:p-6"
       @click.self="closeArtifactModal"
     >
-      <div
-        class="relative flex h-[96vh] w-full max-w-[1660px] flex-col overflow-hidden rounded-[24px] border border-[#d8b986]/22 bg-[linear-gradient(158deg,rgba(8,20,36,0.96),rgba(6,14,25,0.96))] text-white shadow-[0_24px_95px_rgba(0,0,0,0.62)] backdrop-blur-[8px] sm:h-[94vh]"
-      >
-        <div
-          class="pointer-events-none absolute inset-x-0 top-0 h-20 bg-[linear-gradient(to_bottom,rgba(246,208,138,0.08),rgba(246,208,138,0))]"
-        />
+      <div class="relative flex max-h-[94vh] max-w-[96vw] flex-col items-center">
         <button
-          class="absolute top-4 right-4 z-20 flex h-10 w-10 cursor-pointer items-center justify-center rounded-full border border-white/16 bg-black/45 text-[22px] text-white/80 transition hover:border-white/36 hover:bg-black/65 hover:text-white"
+          class="absolute top-3 right-3 z-30 flex h-11 w-11 cursor-pointer items-center justify-center rounded-full border border-white/55 bg-white/68 text-[22px] text-[#5d4b35] shadow-[0_8px_24px_rgba(0,0,0,0.14)] backdrop-blur-md transition hover:bg-white/88"
           aria-label="关闭资料图"
           @click="closeArtifactModal"
         >
@@ -66,139 +61,66 @@
         </button>
 
         <div
-          class="relative flex items-start justify-between gap-4 border-b border-[#d8b986]/16 px-5 py-4 pr-20 sm:px-6 sm:py-5"
+          ref="interactiveImageFrame"
+          class="artifact-interactive-surface relative w-fit max-w-full overflow-visible rounded-[28px] border border-white/42 bg-[rgba(255,250,244,0.34)] p-4 shadow-[0_18px_44px_rgba(0,0,0,0.18)] backdrop-blur-md sm:p-5"
+          @click="clearSelectedArtifact"
         >
-          <div class="min-w-0">
-            <div
-              class="inline-flex items-center rounded-full border border-[#d8b986]/28 bg-[#d8b986]/9 px-3 py-[3px] text-[11px] tracking-[0.14em] text-[#e4cfab]"
-            >
-              展厅资料
-            </div>
-            <div
-              class="mt-2 truncate font-['Noto_Serif_SC',serif] text-[25px] leading-none font-semibold tracking-[0.08em] text-[#f6e6c9] sm:text-[28px]"
-            >
-              {{ activeImageModal.title }}
-            </div>
-            <div class="mt-2 text-sm text-white/66">
-              {{
-                activeHotspots.length > 0
-                  ? '点击图中瓷器查看完整介绍，移动端可直接使用下方列表。'
-                  : '当前资料图仅支持查看大图。'
-              }}
-            </div>
-          </div>
-          <div
-            v-if="activeHotspots.length > 0"
-            class="hidden shrink-0 rounded-full border border-[#d8b986]/32 bg-[#d8b986]/10 px-4 py-[5px] text-xs tracking-[0.12em] text-[#f1ddb9] sm:block"
+          <img
+            ref="interactiveImageElement"
+            :src="activeImageModal.imageUrl"
+            :alt="activeImageModal.title"
+            class="artifact-interactive-surface__image block max-h-[82vh] max-w-[92vw] rounded-[18px] object-contain select-none"
+            @load="handleInteractiveImageLoad"
+          />
+
+          <button
+            v-for="(hotspot, index) in activeHotspots"
+            :key="hotspot.id"
+            :style="getHotspotStyle(hotspot)"
+            class="hotspot-hit-area group absolute cursor-pointer border-none bg-transparent p-0 appearance-none focus:outline-none focus-visible:ring-2 focus-visible:ring-[#c9a46a]/45"
+            :class="{ 'is-active': activeHotspotId === hotspot.id }"
+            :aria-label="`查看 ${hotspot.artifact.title}`"
+            :title="hotspot.artifact.title"
+            @click.stop="selectArtifactHotspot(hotspot.id)"
           >
-            热点 {{ activeHotspots.length }}
-          </div>
-        </div>
-
-        <div
-          class="grid min-h-0 flex-1"
-          :class="activeHotspots.length > 0 ? 'lg:grid-cols-[minmax(0,1fr)_350px]' : ''"
-        >
-          <div class="relative min-h-0 overflow-auto bg-[#050f1c] p-3 sm:p-5">
-            <div
-              class="relative mx-auto w-fit max-w-full rounded-[18px] border border-[#d8b986]/20 bg-[#0a1626] p-2 shadow-[0_18px_48px_rgba(0,0,0,0.45)] sm:p-3"
-            >
-              <img
-                :src="activeImageModal.imageUrl"
-                :alt="activeImageModal.title"
-                class="block max-h-[74vh] max-w-full rounded-xl object-contain"
-              />
-
-              <button
-                v-for="(hotspot, index) in activeHotspots"
-                :key="hotspot.id"
-                :style="getHotspotStyle(hotspot)"
-                class="hotspot-hit-area group absolute -translate-x-1/2 -translate-y-1/2 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-[#ffe9b5] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0d1b2a]"
-                :class="{ 'is-active': activeHotspotId === hotspot.id }"
-                :aria-label="`查看 ${hotspot.artifact.title}`"
-                :title="hotspot.artifact.title"
-                @click.stop="selectArtifactHotspot(hotspot.id)"
-              >
-                <span class="hotspot-hit-area__frame" />
-                <span class="hotspot-hit-area__pin">
-                  {{ index + 1 }}
-                </span>
-                <span class="hotspot-hit-area__label">
-                  {{ hotspot.artifact.title }}
-                </span>
-              </button>
-            </div>
-
-            <div
-              v-if="activeHotspots.length > 0"
-              class="pointer-events-none absolute right-5 bottom-4 rounded-full border border-[#d8b986]/28 bg-[#081524]/78 px-3 py-1 text-[11px] tracking-[0.08em] text-[#e4cfaa]"
-            >
-              轻触编号查看详情
-            </div>
-          </div>
+            <span class="hotspot-hit-area__pin">
+              {{ index + 1 }}
+            </span>
+            <span class="hotspot-hit-area__label">
+              {{ hotspot.artifact.title }}
+            </span>
+          </button>
 
           <div
-            v-if="activeHotspots.length > 0"
-            class="flex min-h-0 flex-col border-t border-[#d8b986]/14 bg-[#0b1b2d]/94 backdrop-blur-sm lg:border-t-0 lg:border-l"
+            v-if="activeArtifactDescription"
+            ref="artifactCardElement"
+            class="artifact-floating-card absolute w-[min(360px,calc(100%-24px))] max-w-[calc(100%-24px)] overflow-visible rounded-[20px] border border-white/62 bg-[rgba(255,251,246,0.9)] text-[#342a1d] shadow-[0_16px_36px_rgba(0,0,0,0.16)] backdrop-blur-xl"
+            :class="`artifact-floating-card--${activeArtifactCardPlacement}`"
+            :style="activeArtifactCardStyle"
+            @click.stop
           >
-            <div class="border-b border-[#d8b986]/14 px-5 py-4 text-sm text-[#e9dcc2]">
-              <div class="text-[11px] tracking-[0.14em] text-[#ccb38f]">
-                {{ activeArtifactDescription ? '当前藏品' : '藏品导览' }}
-              </div>
-              <div class="mt-2 text-base font-semibold tracking-[0.06em] text-[#f6e8d0]">
-                {{ activeArtifactDescription ? activeArtifactDescription.title : '请选择一个瓷器' }}
+            <span
+              class="artifact-floating-card__arrow"
+              :class="`artifact-floating-card__arrow--${activeArtifactCardPlacement}`"
+              :style="activeArtifactCardArrowStyle"
+            />
+            <div class="flex items-start gap-3 px-4 pt-4 pb-3 sm:px-5">
+              <div class="min-w-0 flex-1">
+                <div class="font-['Noto_Serif_SC',serif] text-base font-semibold text-[#4c3921] sm:text-lg">
+                  {{ activeArtifactDescription.title }}
+                </div>
+                <div
+                  class="mt-3 max-h-[220px] overflow-y-auto pr-1 text-[13px] leading-6 whitespace-pre-line text-[#4a4036] sm:text-[14px] sm:leading-7"
+                >
+                  {{ activeArtifactDescription.content }}
+                </div>
               </div>
               <button
-                v-if="activeArtifactDescription"
-                class="mt-3 cursor-pointer rounded-full border border-[#ccb38f]/35 px-3 py-1 text-xs text-[#f1e2c7] transition hover:border-[#f1d6a4]/65 hover:bg-[#d8b986]/10 hover:text-[#ffe9bf]"
+                class="shrink-0 cursor-pointer rounded-full bg-[#f2e5d2] px-3 py-1 text-xs text-[#6b5438] transition hover:bg-[#ead4b0]"
                 @click="clearSelectedArtifact"
               >
-                取消选中
+                关闭
               </button>
-            </div>
-
-            <div class="min-h-0 flex-1 overflow-y-auto px-5 py-5">
-              <div
-                v-if="activeArtifactDescription"
-                class="text-[14px] leading-7 whitespace-pre-line text-[#f5f1e8] sm:text-[15px]"
-              >
-                {{ activeArtifactDescription.content }}
-              </div>
-              <div
-                v-else
-                class="rounded-2xl border border-[#d8b986]/18 bg-[#091726]/72 p-4 text-[13px] leading-6 text-white/68"
-              >
-                点击左侧图片里的编号热点，或在下方列表选择一个器物，这里会显示完整介绍。
-              </div>
-            </div>
-
-            <div class="border-t border-[#d8b986]/14 px-4 py-3">
-              <div class="mb-2 px-1 text-xs tracking-[0.1em] text-[#c6af8d]">器物列表</div>
-              <div class="max-h-[30vh] space-y-2 overflow-y-auto pr-1">
-                <button
-                  v-for="(hotspot, index) in activeHotspots"
-                  :key="`list-${hotspot.id}`"
-                  class="flex w-full cursor-pointer items-center gap-3 rounded-xl border px-3 py-2 text-left text-sm transition-colors"
-                  :class="
-                    activeHotspotId === hotspot.id
-                      ? 'border-[#e6c995]/70 bg-[#cda76d]/15 text-[#f7e4be]'
-                      : 'border-[#d8b986]/16 bg-[#11283f]/44 text-white/76 hover:border-[#d8b986]/40 hover:bg-[#15334f]/62'
-                  "
-                  @click="selectArtifactHotspot(hotspot.id)"
-                >
-                  <span
-                    class="flex h-6 w-6 items-center justify-center rounded-full text-xs font-semibold"
-                    :class="
-                      activeHotspotId === hotspot.id
-                        ? 'bg-[#f2d7a8] text-[#513a1e]'
-                        : 'bg-[#e2c28d]/16 text-[#f2d9ad]'
-                    "
-                  >
-                    {{ index + 1 }}
-                  </span>
-                  <span class="truncate">{{ hotspot.artifact.title }}</span>
-                </button>
-              </div>
             </div>
           </div>
         </div>
@@ -210,7 +132,7 @@
 <script setup lang="ts">
 import { Viewer } from '@photo-sphere-viewer/core'
 import { MarkersPlugin, type MarkerConfig } from '@photo-sphere-viewer/markers-plugin'
-import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
+import { computed, nextTick, onMounted, onUnmounted, ref, watch } from 'vue'
 import {
   getExhibition1InteractiveImageConfig,
   type ArtifactHotspot,
@@ -284,6 +206,9 @@ const props = defineProps({
 })
 
 const viewerContainer = ref<HTMLElement | null>(null)
+const interactiveImageFrame = ref<HTMLElement | null>(null)
+const interactiveImageElement = ref<HTMLImageElement | null>(null)
+const artifactCardElement = ref<HTMLElement | null>(null)
 const coordinateHistory = ref<CoordinateEntry[]>([])
 const currentSceneConfig = ref<HallSceneConfig | null>(null)
 const currentNodeId = ref('')
@@ -291,6 +216,9 @@ const isSwitching = ref(false)
 const artifactMarkers = ref<MarkerConfig[]>([])
 const activeImageModal = ref<ArtifactImageModalState | null>(null)
 const activeHotspotId = ref<string | null>(null)
+const activeArtifactCardStyle = ref<Record<string, string>>({})
+const activeArtifactCardArrowStyle = ref<Record<string, string>>({})
+const activeArtifactCardPlacement = ref<'top' | 'bottom'>('top')
 
 const manualArtifactSpotMap = new Map<number, ManualArtifactSpot[]>([
   [
@@ -469,11 +397,12 @@ const currentNode = computed(() => {
   return getNodeConfig(currentSceneConfig.value, currentNodeId.value) ?? null
 })
 const activeHotspots = computed(() => activeImageModal.value?.interactiveImage?.hotspots ?? [])
-const activeArtifactDescription = computed(() => {
+const activeHotspot = computed(() => {
   if (!activeHotspotId.value) return null
-  return (
-    activeHotspots.value.find((hotspot) => hotspot.id === activeHotspotId.value)?.artifact ?? null
-  )
+  return activeHotspots.value.find((hotspot) => hotspot.id === activeHotspotId.value) ?? null
+})
+const activeArtifactDescription = computed(() => {
+  return activeHotspot.value?.artifact ?? null
 })
 
 const showFogMask = computed(() => {
@@ -566,9 +495,66 @@ function getHotspotStyle(hotspot: ArtifactHotspot) {
   return {
     left: `${hotspot.x}%`,
     top: `${hotspot.y}%`,
-    width: `${hotspot.width}%`,
-    height: `${hotspot.height}%`,
   }
+}
+
+function updateArtifactCardPosition() {
+  if (!activeHotspot.value || !interactiveImageFrame.value || !artifactCardElement.value) {
+    activeArtifactCardStyle.value = {}
+    activeArtifactCardArrowStyle.value = {}
+    return
+  }
+
+  const frameRect = interactiveImageFrame.value.getBoundingClientRect()
+  const cardRect = artifactCardElement.value.getBoundingClientRect()
+
+  if (!frameRect.width || !frameRect.height || !cardRect.width || !cardRect.height) return
+
+  const hotspotX = (activeHotspot.value.x / 100) * frameRect.width
+  const hotspotY = (activeHotspot.value.y / 100) * frameRect.height
+  const safeMargin = 12
+  const cardGap = 20
+  let placement: 'top' | 'bottom' = 'top'
+  let top = hotspotY - cardRect.height - cardGap
+
+  if (top < safeMargin) {
+    placement = 'bottom'
+    top = hotspotY + cardGap
+  }
+
+  if (top + cardRect.height > frameRect.height - safeMargin) {
+    placement = 'top'
+    top = hotspotY - cardRect.height - cardGap
+  }
+
+  top = clamp(top, safeMargin, Math.max(safeMargin, frameRect.height - cardRect.height - safeMargin))
+
+  let left = hotspotX - cardRect.width / 2
+  left = clamp(left, safeMargin, Math.max(safeMargin, frameRect.width - cardRect.width - safeMargin))
+
+  const arrowLeft = clamp(
+    hotspotX - left,
+    24,
+    Math.max(24, cardRect.width - 24),
+  )
+
+  activeArtifactCardPlacement.value = placement
+  activeArtifactCardStyle.value = {
+    left: `${left}px`,
+    top: `${top}px`,
+  }
+  activeArtifactCardArrowStyle.value = {
+    left: `${arrowLeft}px`,
+  }
+}
+
+async function syncArtifactCardPosition() {
+  await nextTick()
+  updateArtifactCardPosition()
+}
+
+function handleInteractiveImageLoad() {
+  void syncArtifactCardPosition()
 }
 
 function buildNavigationMarkers(node: PanoramaNodeConfig): MarkerConfig[] {
@@ -739,15 +725,20 @@ function showArtifactModal(data: ArtifactMarkerData) {
 
 function closeArtifactModal() {
   activeHotspotId.value = null
+  activeArtifactCardStyle.value = {}
+  activeArtifactCardArrowStyle.value = {}
   activeImageModal.value = null
 }
 
 function selectArtifactHotspot(hotspotId: string) {
-  activeHotspotId.value = hotspotId
+  activeHotspotId.value = activeHotspotId.value === hotspotId ? null : hotspotId
+  void syncArtifactCardPosition()
 }
 
 function clearSelectedArtifact() {
   activeHotspotId.value = null
+  activeArtifactCardStyle.value = {}
+  activeArtifactCardArrowStyle.value = {}
 }
 
 function handleGlobalKeydown(event: KeyboardEvent) {
@@ -872,13 +863,22 @@ watch(
   },
 )
 
+watch(
+  () => [activeHotspotId.value, activeImageModal.value?.imageUrl],
+  () => {
+    void syncArtifactCardPosition()
+  },
+)
+
 onMounted(async () => {
   document.addEventListener('keydown', handleGlobalKeydown)
+  window.addEventListener('resize', updateArtifactCardPosition)
   await initViewer()
 })
 
 onUnmounted(() => {
   document.removeEventListener('keydown', handleGlobalKeydown)
+  window.removeEventListener('resize', updateArtifactCardPosition)
   destroyViewer()
 })
 </script>
@@ -1043,55 +1043,26 @@ onUnmounted(() => {
 @keyframes image-hotspot-breathe {
   0%,
   100% {
-    opacity: 0.88;
+    opacity: 0.82;
     transform: scale(1);
   }
   50% {
     opacity: 1;
-    transform: scale(1.06);
+    transform: scale(1.04);
   }
 }
 
 .hotspot-hit-area {
-  min-width: 44px;
-  min-height: 44px;
-  border-radius: 18px;
-  background: transparent;
-}
-
-.hotspot-hit-area::after {
-  content: '';
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  width: 34px;
-  height: 34px;
-  border-radius: 9999px;
+  appearance: none;
+  -webkit-appearance: none;
+  width: 40px;
+  height: 40px;
+  margin: 0;
+  border: 0;
+  padding: 0;
   transform: translate(-50%, -50%);
-  background: radial-gradient(
-    circle,
-    rgba(255, 214, 134, 0.28) 0%,
-    rgba(255, 190, 96, 0.12) 48%,
-    rgba(255, 190, 96, 0) 100%
-  );
-  opacity: 0;
-  transition: opacity 0.2s ease;
-  pointer-events: none;
-}
-
-.hotspot-hit-area__frame {
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  border: 1px solid rgba(255, 218, 151, 0.45);
-  background: rgba(255, 221, 158, 0.06);
-  box-shadow: inset 0 0 0 1px rgba(255, 240, 205, 0.08);
-  opacity: 0;
-  transform: scale(0.94);
-  transition:
-    opacity 0.22s ease,
-    transform 0.22s ease,
-    border-color 0.22s ease;
+  background: transparent;
+  line-height: 1;
 }
 
 .hotspot-hit-area__pin {
@@ -1102,22 +1073,24 @@ onUnmounted(() => {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 24px;
-  height: 24px;
+  width: 18px;
+  height: 18px;
   border-radius: 9999px;
   transform: translate(-50%, -50%);
-  border: 1px solid rgba(255, 235, 194, 0.88);
+  border: 1px solid rgba(255, 255, 255, 0.95);
   background: radial-gradient(
     circle,
-    rgba(253, 245, 224, 0.98) 0%,
-    rgba(244, 201, 128, 0.9) 55%,
-    rgba(168, 117, 50, 0.88) 100%
+    rgba(255, 250, 243, 0.98) 0%,
+    rgba(232, 201, 155, 0.94) 65%,
+    rgba(194, 153, 99, 0.94) 100%
   );
   color: rgba(59, 34, 13, 0.92);
-  font-size: 11px;
+  font-size: 9px;
   font-weight: 700;
-  box-shadow: 0 0 18px rgba(245, 199, 117, 0.42);
-  animation: image-hotspot-breathe 2.3s ease-in-out infinite;
+  box-shadow:
+    0 3px 10px rgba(138, 108, 66, 0.22),
+    0 0 0 4px rgba(236, 213, 181, 0.18);
+  animation: image-hotspot-breathe 2.6s ease-in-out infinite;
   transition:
     transform 0.22s ease,
     box-shadow 0.22s ease,
@@ -1127,15 +1100,15 @@ onUnmounted(() => {
 .hotspot-hit-area__label {
   position: absolute;
   left: 50%;
-  top: 50%;
+  top: -2px;
   z-index: 3;
   max-width: 250px;
-  transform: translate(-50%, calc(-50% - 31px));
-  border: 1px solid rgba(247, 221, 175, 0.44);
+  transform: translate(-50%, -100%);
+  border: 1px solid rgba(214, 188, 151, 0.46);
   border-radius: 9999px;
-  background: rgba(6, 18, 32, 0.92);
-  color: #fae7c2;
-  padding: 5px 11px;
+  background: rgba(255, 255, 255, 0.9);
+  color: #5f4a33;
+  padding: 5px 10px;
   white-space: nowrap;
   font-size: 12px;
   line-height: 1.2;
@@ -1147,41 +1120,54 @@ onUnmounted(() => {
     transform 0.2s ease;
 }
 
-.hotspot-hit-area:hover .hotspot-hit-area__frame,
-.hotspot-hit-area.is-active .hotspot-hit-area__frame {
+.hotspot-hit-area:hover .hotspot-hit-area__label {
   opacity: 1;
-  transform: scale(1);
-}
-
-.hotspot-hit-area:hover::after,
-.hotspot-hit-area.is-active::after {
-  opacity: 1;
-}
-
-.hotspot-hit-area:hover .hotspot-hit-area__label,
-.hotspot-hit-area.is-active .hotspot-hit-area__label {
-  opacity: 1;
-  transform: translate(-50%, calc(-50% - 34px));
+  transform: translate(-50%, calc(-100% - 2px));
 }
 
 .hotspot-hit-area:hover .hotspot-hit-area__pin,
 .hotspot-hit-area.is-active .hotspot-hit-area__pin {
-  transform: translate(-50%, -50%) scale(1.12);
+  transform: translate(-50%, -50%) scale(1.14);
   box-shadow:
-    0 0 0 7px rgba(245, 210, 145, 0.16),
-    0 0 24px rgba(248, 208, 130, 0.64);
+    0 6px 14px rgba(140, 108, 61, 0.26),
+    0 0 0 6px rgba(231, 202, 161, 0.28);
+}
+
+.artifact-floating-card {
+  pointer-events: auto;
+}
+
+.artifact-floating-card__arrow {
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  background: rgba(255, 251, 246, 0.9);
+  transform: translateX(-50%) rotate(45deg);
+  backdrop-filter: blur(16px);
+}
+
+.artifact-floating-card__arrow--top {
+  bottom: -8px;
+  border-right: 1px solid rgba(255, 255, 255, 0.62);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.62);
+}
+
+.artifact-floating-card__arrow--bottom {
+  top: -8px;
+  border-left: 1px solid rgba(255, 255, 255, 0.62);
+  border-top: 1px solid rgba(255, 255, 255, 0.62);
 }
 
 @media (max-width: 640px) {
   .hotspot-hit-area {
-    min-width: 52px;
-    min-height: 52px;
+    width: 46px;
+    height: 46px;
   }
 
   .hotspot-hit-area__pin {
-    width: 28px;
-    height: 28px;
-    font-size: 12px;
+    width: 22px;
+    height: 22px;
+    font-size: 10px;
   }
 
   .hotspot-hit-area__label {

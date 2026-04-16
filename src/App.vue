@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import NavbarComponent from '@/components/Navbar/NavbarComponent.vue'
-import FooterComponent from '@/components/Footer/FooterComponent.vue'
 </script>
 
 <template>
@@ -9,6 +8,5 @@ import FooterComponent from '@/components/Footer/FooterComponent.vue'
     <main class="flex-grow">
       <RouterView />
     </main>
-    <FooterComponent />
   </div>
 </template>
