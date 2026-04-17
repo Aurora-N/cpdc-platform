@@ -140,13 +140,17 @@
                   role="dialog"
                   aria-modal="true"
                   @click.stop
+                  @wheel.stop
+                  @touchmove.stop
                 >
                   <div class="px-4 pt-4 pb-3 sm:px-5">
                     <div class="font-['Noto_Serif_SC',serif] text-base font-semibold text-[#4c3921] sm:text-lg">
                       {{ activeArtifactDescription.title }}
                     </div>
                     <div
-                      class="mt-3 max-h-[min(52vh,360px)] overflow-y-auto pr-1 text-[13px] leading-6 whitespace-pre-line text-[#4a4036] sm:text-[14px] sm:leading-7"
+                      class="mt-3 max-h-[min(52vh,360px)] overflow-y-auto overscroll-contain pr-1 text-[13px] leading-6 whitespace-pre-line text-[#4a4036] sm:text-[14px] sm:leading-7"
+                      @wheel.stop
+                      @touchmove.stop
                     >
                       {{ activeArtifactDescription.content }}
                     </div>
@@ -253,6 +257,8 @@ const activeHallVideoUrl = ref('')
 const isFullscreenVideo = ref(true)
 const activeHotspotId = ref<string | null>(null)
 const interactiveImageViewportStyle = ref<Record<string, string>>({})
+const exhibitionDescriptionText = ref<string>('')
+const exhibitionDescriptionVersion = ref(0)
 
 const manualArtifactSpotMap = new Map<number, ManualArtifactSpot[]>([
   [
@@ -450,7 +456,22 @@ const activeHotspot = computed(() => {
   return activeHotspots.value.find((hotspot) => hotspot.id === activeHotspotId.value) ?? null
 })
 const activeArtifactDescription = computed(() => {
-  return activeHotspot.value?.artifact ?? null
+  const hotspotArtifact = activeHotspot.value?.artifact
+  if (!hotspotArtifact) return null
+
+  // 依赖版本号，确保 description.txt 异步加载完成后触发重算
+  exhibitionDescriptionVersion.value
+
+  const fullContent = resolveArtifactDescriptionContent(
+    activeImageModal.value?.interactiveImage?.title ?? '',
+    hotspotArtifact.title,
+    hotspotArtifact.content,
+  )
+
+  return {
+    ...hotspotArtifact,
+    content: fullContent,
+  }
 })
 const hotspotRailStyle = computed<Record<string, string>>(() => ({
   '--hotspot-count': String(Math.max(activeHotspots.value.length, 1)),
@@ -543,6 +564,102 @@ function resolvePublicAssetUrl(assetPath: string): string {
   const base = import.meta.env.BASE_URL || '/'
   const normalizedBase = base.endsWith('/') ? base : `${base}/`
   return `${normalizedBase}${assetPath}`
+}
+
+function normalizeForCompare(text: string): string {
+  return text.replace(/[\s\u3000]+/g, '').trim()
+}
+
+function escapeRegExp(text: string): string {
+  return text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+}
+
+async function ensureExhibitionDescriptionLoaded() {
+  if (exhibitionDescriptionText.value) return
+
+  try {
+    const response = await fetch(resolvePublicAssetUrl('description.txt'))
+    if (!response.ok) return
+    exhibitionDescriptionText.value = await response.text()
+    exhibitionDescriptionVersion.value += 1
+  } catch {
+    // 文本加载失败时回退到内置文案
+  }
+}
+
+function resolveArtifactDescriptionContent(periodTitle: string, artifactTitle: string, fallback: string): string {
+  const raw = exhibitionDescriptionText.value
+  if (!raw) return fallback
+
+  const lines = raw.split(/\r?\n/)
+  const numberedTitlePattern = /^\s*\d+\.\s*(.+?)\s*$/
+  const normalizedArtifactTitle = normalizeForCompare(artifactTitle)
+  const periodAnchor = `——${periodTitle}`
+  const periodHeaderPattern = /[（(]\d{4}[^）)]*[）)]\s*——/
+
+  const isPeriodHeaderLine = (line: string): boolean => {
+    return periodHeaderPattern.test(line.replace(/\s+/g, ''))
+  }
+
+  const findSectionInLines = (sourceLines: string[], stopAtPeriodHeader: boolean): string => {
+    let startIndex = -1
+
+    for (let i = 0; i < sourceLines.length; i += 1) {
+      const line = sourceLines[i]
+      const matched = line.match(numberedTitlePattern)
+      if (!matched) continue
+      const candidateTitle = normalizeForCompare(matched[1])
+      if (candidateTitle === normalizedArtifactTitle) {
+        startIndex = i
+        break
+      }
+    }
+
+    if (startIndex === -1) {
+      const exactTitlePattern = new RegExp(`^\\s*${escapeRegExp(artifactTitle)}\\s*$`)
+      startIndex = sourceLines.findIndex((line) => exactTitlePattern.test(line.trim()))
+      if (startIndex === -1) return ''
+    }
+
+    let endIndex = sourceLines.length
+    for (let i = startIndex + 1; i < sourceLines.length; i += 1) {
+      const line = sourceLines[i]
+      if (numberedTitlePattern.test(line) || (stopAtPeriodHeader && isPeriodHeaderLine(line))) {
+        endIndex = i
+        break
+      }
+    }
+
+    return sourceLines.slice(startIndex, endIndex).join('\n').trim()
+  }
+
+  const periodStart = lines.findIndex((line) => line.includes(periodAnchor))
+  let periodLines: string[] = []
+
+  if (periodStart !== -1) {
+    let periodEnd = lines.length
+    for (let i = periodStart + 1; i < lines.length; i += 1) {
+      if (isPeriodHeaderLine(lines[i])) {
+        periodEnd = i
+        break
+      }
+    }
+    periodLines = lines.slice(periodStart, periodEnd)
+    const sectionInPeriod = findSectionInLines(periodLines, false)
+    if (sectionInPeriod) return sectionInPeriod
+  }
+
+  // 二次兜底：跨时期全局按标题检索，仍然返回 description.txt 原文，不走摘要
+  const sectionInAll = findSectionInLines(lines, true)
+  if (sectionInAll) return sectionInAll
+
+  // 仍未命中时返回该时期的整段原文，确保不展示摘要版本
+  if (periodLines.length > 0) {
+    const wholePeriod = periodLines.join('\n').trim()
+    if (wholePeriod) return wholePeriod
+  }
+
+  return raw.trim() || fallback
 }
 
 function resolveHallVideoPath(hall: number, nodeId: string): string {
@@ -802,6 +919,7 @@ function showArtifactModal(data: ArtifactMarkerData) {
     interactiveImage,
   }
   activeHotspotId.value = null
+  void ensureExhibitionDescriptionLoaded()
 }
 
 function closeArtifactModal() {
