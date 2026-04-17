@@ -6,8 +6,10 @@ export interface ArtifactDescription {
 
 export interface ArtifactHotspot {
   id: string
+  // x/y 为热点中心点，相对图片可视区域（img）宽高的百分比
   x: number
   y: number
+  // width/height 为可点击命中区域，相对图片可视区域（img）宽高的百分比
   width: number
   height: number
   artifact: ArtifactDescription
@@ -66,7 +68,7 @@ export const exhibition1InteractiveImages: Record<
       createHotspot(
         'ex1-1-1',
         16.8,
-        75.8,
+        81.8,
         8.4,
         11.8,
         '广彩描金纹章花卉纹盘',
@@ -98,7 +100,7 @@ export const exhibition1InteractiveImages: Record<
       createHotspot(
         'ex1-1-2',
         46.9,
-        75.6,
+        81.6,
         7.8,
         11.2,
         '广彩纹章花卉纹大盘',
@@ -127,7 +129,7 @@ export const exhibition1InteractiveImages: Record<
       createHotspot(
         'ex1-1-3',
         74.8,
-        70.8,
+        80.8,
         6.9,
         10.5,
         '广彩描金纹章纹大盘',
@@ -142,7 +144,7 @@ export const exhibition1InteractiveImages: Record<
       createHotspot(
         'ex1-1-4',
         85.3,
-        70.7,
+        80.7,
         6.6,
         10.2,
         '广彩纹章凤凰牡丹纹托盘',
@@ -178,7 +180,7 @@ export const exhibition1InteractiveImages: Record<
       createHotspot(
         'ex1-2-1',
         6.4,
-        83.1,
+        84.6,
         7.2,
         11.5,
         '广彩描金纹章纹盘',
@@ -207,7 +209,7 @@ export const exhibition1InteractiveImages: Record<
       createHotspot(
         'ex1-2-2',
         17.8,
-        83.2,
+        84.8,
         7.0,
         11.5,
         '广彩折枝花卉纹花口盘',
@@ -220,7 +222,7 @@ export const exhibition1InteractiveImages: Record<
       createHotspot(
         'ex1-2-3',
         38.3,
-        83.1,
+        84.6,
         7.0,
         11.5,
         '广彩山水人物纹盘',
@@ -232,7 +234,7 @@ export const exhibition1InteractiveImages: Record<
       createHotspot(
         'ex1-2-4',
         52.8,
-        72.6,
+        80.5,
         8.2,
         24.0,
         '广彩开光人物纹瓶',
@@ -243,7 +245,7 @@ export const exhibition1InteractiveImages: Record<
       createHotspot(
         'ex1-2-5',
         73.6,
-        83.0,
+        84.4,
         7.0,
         11.5,
         '广彩纹章花卉纹盘',
@@ -272,7 +274,7 @@ export const exhibition1InteractiveImages: Record<
       createHotspot(
         'ex1-2-6',
         80.5,
-        83.1,
+        84.6,
         7.0,
         11.5,
         '广彩描金纹章折枝花卉纹盘',
@@ -301,7 +303,7 @@ export const exhibition1InteractiveImages: Record<
       createHotspot(
         'ex1-2-7',
         91.8,
-        74.9,
+        81.9,
         7.0,
         11.5,
         '广彩纹章八角盘',
@@ -314,7 +316,7 @@ export const exhibition1InteractiveImages: Record<
       createHotspot(
         'ex1-2-8',
         98.0,
-        75.1,
+        78.1,
         6.2,
         10.8,
         '广彩折枝花蝶纹盘',
@@ -334,7 +336,7 @@ export const exhibition1InteractiveImages: Record<
       createHotspot(
         'ex1-3-1',
         13.5,
-        83.0,
+        84.4,
         7.0,
         11.2,
         '广彩纹章花卉纹盘',
@@ -347,7 +349,7 @@ export const exhibition1InteractiveImages: Record<
       createHotspot(
         'ex1-3-2',
         28.7,
-        82.9,
+        84.3,
         7.0,
         11.2,
         '广彩纹章花卉纹碟',
@@ -360,7 +362,7 @@ export const exhibition1InteractiveImages: Record<
       createHotspot(
         'ex1-3-3',
         43.6,
-        82.8,
+        84.2,
         7.0,
         11.2,
         '广彩山水人物纹花口碟',
@@ -388,7 +390,7 @@ export const exhibition1InteractiveImages: Record<
       createHotspot(
         'ex1-3-4',
         56.1,
-        80.8,
+        83.0,
         7.4,
         12.0,
         '广彩蓝彩描金折枝花卉纹碗',
@@ -401,7 +403,7 @@ export const exhibition1InteractiveImages: Record<
       createHotspot(
         'ex1-3-5',
         67.8,
-        80.6,
+        82.8,
         8.4,
         13.0,
         '广彩锦地开光人物纹碗',
@@ -429,7 +431,7 @@ export const exhibition1InteractiveImages: Record<
       createHotspot(
         'ex1-3-6',
         75.0,
-        71.3,
+        79.8,
         7.0,
         11.0,
         '广彩人物纹八角盘',
@@ -442,7 +444,7 @@ export const exhibition1InteractiveImages: Record<
       createHotspot(
         'ex1-3-7',
         89.1,
-        75.7,
+        81.8,
         7.5,
         22.5,
         '广彩花卉纹六棱扁瓶',
@@ -455,7 +457,7 @@ export const exhibition1InteractiveImages: Record<
       createHotspot(
         'ex1-3-8',
         97.0,
-        75.6,
+        81.7,
         7.0,
         22.0,
         '广彩浆胎奖杯纹扁瓶',
@@ -491,7 +493,7 @@ export const exhibition1InteractiveImages: Record<
       createHotspot(
         'ex1-4-1',
         19.2,
-        81.2,
+        82.0,
         10.0,
         16.0,
         '广彩纹章人物纹汤窝、托碟',
@@ -520,7 +522,7 @@ export const exhibition1InteractiveImages: Record<
       createHotspot(
         'ex1-4-2',
         39.1,
-        81.4,
+        82.1,
         11.0,
         13.0,
         '广彩人物纹暖盘',
@@ -534,7 +536,7 @@ export const exhibition1InteractiveImages: Record<
       createHotspot(
         'ex1-4-3',
         52.0,
-        82.8,
+        82.0,
         9.0,
         11.0,
         '广彩描金折枝花卉镂空椭圆形果篮、托盘',
@@ -563,7 +565,7 @@ export const exhibition1InteractiveImages: Record<
       createHotspot(
         'ex1-4-4',
         69.3,
-        81.8,
+        78.2,
         7.5,
         11.0,
         '广彩描金开窗纹章山水纹盘',
@@ -577,7 +579,7 @@ export const exhibition1InteractiveImages: Record<
       createHotspot(
         'ex1-4-5',
         76.7,
-        82.0,
+        78.3,
         7.5,
         11.0,
         '广彩描金人物纹碟',
@@ -591,7 +593,7 @@ export const exhibition1InteractiveImages: Record<
       createHotspot(
         'ex1-4-6',
         84.4,
-        82.2,
+        72.6,
         7.5,
         11.0,
         '蓝彩描金开窗风景图贝形盘',
@@ -603,7 +605,7 @@ export const exhibition1InteractiveImages: Record<
       createHotspot(
         'ex1-4-7',
         93.9,
-        81.7,
+        78.1,
         10.0,
         14.0,
         '广彩描金人物纹大碗',
@@ -632,7 +634,7 @@ export const exhibition1InteractiveImages: Record<
       createHotspot(
         'ex1-4-8',
         98.7,
-        81.9,
+        74.1,
         6.5,
         12.0,
         '广彩人物纹椭圆形盘',
@@ -651,7 +653,7 @@ export const exhibition1InteractiveImages: Record<
       createHotspot(
         'ex1-5-1',
         14.2,
-        82.9,
+        84.2,
         7.0,
         11.0,
         '广彩花鸟纹盘',
@@ -664,7 +666,7 @@ export const exhibition1InteractiveImages: Record<
       createHotspot(
         'ex1-5-2',
         30.1,
-        83.1,
+        83.8,
         8.0,
         13.0,
         '广彩花鸟纹瓣口碗',
@@ -677,7 +679,7 @@ export const exhibition1InteractiveImages: Record<
       createHotspot(
         'ex1-5-3',
         46.3,
-        83.2,
+        83.6,
         10.0,
         14.0,
         '广彩人物纹暖盆',
@@ -690,7 +692,7 @@ export const exhibition1InteractiveImages: Record<
       createHotspot(
         'ex1-5-4',
         59.0,
-        82.0,
+        81.0,
         9.0,
         16.0,
         '广彩八棱壶',
@@ -703,7 +705,7 @@ export const exhibition1InteractiveImages: Record<
       createHotspot(
         'ex1-5-5',
         73.7,
-        76.3,
+        77.3,
         8.0,
         24.0,
         '广彩人物花卉纹双狮耳花口瓶',
@@ -731,7 +733,7 @@ export const exhibition1InteractiveImages: Record<
       createHotspot(
         'ex1-5-6',
         84.4,
-        76.3,
+        77.2,
         8.0,
         24.0,
         '广彩开光人物纹双鹤耳花口瓶',
@@ -759,7 +761,7 @@ export const exhibition1InteractiveImages: Record<
       createHotspot(
         'ex1-5-7',
         92.6,
-        78.6,
+        79.1,
         7.0,
         18.0,
         '广彩八方形双耳花插',
@@ -787,7 +789,7 @@ export const exhibition1InteractiveImages: Record<
       createHotspot(
         'ex1-5-8',
         98.2,
-        76.5,
+        77.4,
         6.0,
         24.0,
         '广彩四相图瓶',
@@ -807,7 +809,7 @@ export const exhibition1InteractiveImages: Record<
       createHotspot(
         'ex1-6-1',
         13.0,
-        83.2,
+        84.3,
         8.0,
         12.0,
         '广彩花鸟雄鸡纹盘',
@@ -818,7 +820,7 @@ export const exhibition1InteractiveImages: Record<
       createHotspot(
         'ex1-6-2',
         25.1,
-        83.2,
+        84.3,
         8.0,
         12.0,
         '广彩都江堰图盘',
@@ -846,7 +848,7 @@ export const exhibition1InteractiveImages: Record<
       createHotspot(
         'ex1-6-3',
         49.0,
-        78.6,
+        78.4,
         10.0,
         26.0,
         '广彩人物图双耳盘口瓶',
@@ -858,7 +860,7 @@ export const exhibition1InteractiveImages: Record<
       createHotspot(
         'ex1-6-4',
         67.4,
-        75.9,
+        77.1,
         9.0,
         26.0,
         '广彩满园丽影图瓶',
@@ -887,7 +889,7 @@ export const exhibition1InteractiveImages: Record<
       createHotspot(
         'ex1-6-5',
         79.0,
-        75.8,
+        77.0,
         9.0,
         26.0,
         '广彩开光仕女图台灯',
@@ -899,7 +901,7 @@ export const exhibition1InteractiveImages: Record<
       createHotspot(
         'ex1-6-6',
         90.4,
-        78.5,
+        80.2,
         8.5,
         20.0,
         '广彩锦地开光人物图灯笼瓶',
@@ -911,7 +913,7 @@ export const exhibition1InteractiveImages: Record<
       createHotspot(
         'ex1-6-7',
         97.7,
-        75.8,
+        77.0,
         6.5,
         24.0,
         '广彩大观园双狮耳瓣口瓶',
