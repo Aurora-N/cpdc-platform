@@ -169,6 +169,106 @@
         </div>
       </div>
     </div>
+
+    <div
+      v-if="isQaGameModalOpen"
+      class="absolute inset-0 z-[9998] flex items-center justify-center bg-black/52 p-3 backdrop-blur-[2px] sm:p-6"
+      @click.self="closeQaGameModal"
+    >
+      <div
+        class="relative w-[min(920px,96vw)] max-h-[92vh] overflow-hidden rounded-[22px] border border-white/62 bg-[rgba(255,251,246,0.96)] text-[#342a1d] shadow-[0_24px_44px_rgba(0,0,0,0.24)] backdrop-blur-xl"
+        @click.stop
+        @wheel.stop
+        @touchmove.stop
+      >
+        <button
+          class="absolute top-3 right-3 z-30 flex h-10 w-10 cursor-pointer items-center justify-center rounded-full border border-[#8e7758]/45 bg-white/72 text-[20px] text-[#5d4b35] transition hover:bg-white/90"
+          aria-label="关闭互动问答"
+          @click="closeQaGameModal"
+        >
+          ×
+        </button>
+        <div class="px-5 pt-5 pb-4 sm:px-6">
+          <div class="font-['Noto_Serif_SC',serif] text-lg font-semibold text-[#4c3921] sm:text-xl">
+            彩瓷密码互动问答
+          </div>
+          <div class="mt-2 text-sm text-[#7a6244]">
+            当前得分：{{ qaScore }} / {{ qaQuestions.length }}
+          </div>
+          <div class="mt-2 h-2 w-full overflow-hidden rounded-full bg-[#eadfce]">
+            <div class="h-full bg-[#c59a62] transition-all" :style="{ width: `${qaProgressPercent}%` }" />
+          </div>
+          <div
+            class="mt-4 max-h-[calc(92vh-160px)] overflow-y-auto overscroll-contain pr-1 text-[14px] leading-7 text-[#4a4036]"
+            @wheel.stop
+            @touchmove.stop
+          >
+            <template v-if="!qaIsFinished && qaCurrentQuestion">
+              <div class="rounded-xl border border-[#e3d3bc] bg-[#fffaf2] px-4 py-3">
+                <div class="text-xs text-[#8b6f4e]">
+                  第 {{ qaCurrentIndex + 1 }} 题 / 共 {{ qaQuestions.length }} 题
+                </div>
+                <div class="mt-2 text-[16px] font-medium text-[#3f3121]">
+                  {{ qaCurrentQuestion.question }}
+                </div>
+                <div class="mt-3 grid gap-2">
+                  <button
+                    v-for="(option, optionIndex) in qaCurrentQuestion.options"
+                    :key="`${qaCurrentQuestion.id}-${optionIndex}`"
+                    class="cursor-pointer rounded-lg border px-3 py-2 text-left transition"
+                    :class="qaOptionClass(optionIndex)"
+                    :disabled="qaAnswered"
+                    @click="answerQaQuestion(optionIndex)"
+                  >
+                    <span class="mr-2 text-[#8a6a44]">{{ String.fromCharCode(65 + optionIndex) }}.</span>
+                    {{ option }}
+                  </button>
+                </div>
+                <div v-if="qaAnswered" class="mt-3 rounded-lg bg-white/70 px-3 py-2 text-[13px] leading-6">
+                  <div class="font-medium" :class="qaAnswerCorrect ? 'text-[#2d7b4b]' : 'text-[#b1493d]'">
+                    {{ qaAnswerCorrect ? '回答正确' : '回答错误' }}
+                  </div>
+                  <div class="mt-1 text-[#5a4b3b]">
+                    {{ qaCurrentQuestion.explanation }}
+                  </div>
+                  <button
+                    class="mt-3 cursor-pointer rounded-md bg-[#9f7747] px-3 py-1.5 text-white transition hover:bg-[#8d6739]"
+                    @click="nextQaQuestion"
+                  >
+                    {{ qaCurrentIndex + 1 === qaQuestions.length ? '查看结果' : '下一题' }}
+                  </button>
+                </div>
+              </div>
+            </template>
+            <template v-else>
+              <div class="rounded-xl border border-[#e3d3bc] bg-[#fffaf2] px-4 py-4">
+                <div class="text-[18px] font-semibold text-[#4a3923]">闯关完成</div>
+                <div class="mt-2 text-[15px] text-[#5c4b39]">
+                  你总共答对 {{ qaScore }} / {{ qaQuestions.length }} 题。
+                </div>
+                <div class="mt-2 text-[14px] text-[#7a6244]">
+                  {{ qaScore >= 5 ? '太厉害了，已解锁“广彩密码高手”称号。' : '不错，再来一轮把拼图碎片集齐。' }}
+                </div>
+                <div class="mt-4 flex gap-2">
+                  <button
+                    class="cursor-pointer rounded-md bg-[#9f7747] px-3 py-1.5 text-white transition hover:bg-[#8d6739]"
+                    @click="restartQaGame"
+                  >
+                    再玩一次
+                  </button>
+                  <button
+                    class="cursor-pointer rounded-md border border-[#c9b49a] px-3 py-1.5 text-[#6e563a] transition hover:bg-[#f6ecdf]"
+                    @click="closeQaGameModal"
+                  >
+                    关闭
+                  </button>
+                </div>
+              </div>
+            </template>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -211,7 +311,19 @@ interface ArtifactMarkerData {
   interactiveImageKey?: Exhibition1InteractiveImageKey
 }
 
-type MarkerPayload = NavigationMarkerData | ArtifactMarkerData
+interface QaGameMarkerData {
+  kind: 'qa-game'
+}
+
+type MarkerPayload = NavigationMarkerData | ArtifactMarkerData | QaGameMarkerData
+
+interface QaQuestionItem {
+  id: string
+  question: string
+  options: string[]
+  answerIndex: number
+  explanation: string
+}
 
 interface ManualArtifactSpot {
   id: string
@@ -267,6 +379,65 @@ const activeHotspotId = ref<string | null>(null)
 const interactiveImageViewportStyle = ref<Record<string, string>>({})
 const exhibitionDescriptionText = ref<string>('')
 const exhibitionDescriptionVersion = ref(0)
+const isQaGameModalOpen = ref(false)
+const qaCurrentIndex = ref(0)
+const qaScore = ref(0)
+const qaSelectedIndex = ref<number | null>(null)
+const qaAnswered = ref(false)
+const qaAnswerCorrect = ref(false)
+
+const qaQuestions: QaQuestionItem[] = [
+  {
+    id: 'qa-1',
+    question: '广彩瓷纹饰密集华丽，常用“（ ）彩（ ）纷”形容其色彩丰富，应填哪两个字？',
+    options: ['五、缤', '万、千', '青、红', '金、玉'],
+    answerIndex: 0,
+    explanation: '答案是“五、缤”，成语为“五彩缤纷”。',
+  },
+  {
+    id: 'qa-2',
+    question: '广彩中的“茄色”比景德镇茄皮紫更明艳，它由哪两种颜料配合而成？',
+    options: ['水青 + 干大红', '西红 + 水青', '麻色 + 金色', '水绿 + 二绿'],
+    answerIndex: 1,
+    explanation: '答案是“西红 + 水青”，碰撞后形成鲜亮茄色。',
+  },
+  {
+    id: 'qa-3',
+    question: '老匠人说“织金填绿前，先给图案打腮红”，这里的“打腮红”是哪道工序？',
+    options: ['印稿', '挞花', '烧制', '装饰'],
+    answerIndex: 1,
+    explanation: '“挞花”用于点出花瓣明暗层次，类似“打腮红”。',
+  },
+  {
+    id: 'qa-4',
+    question: '“车线要稳，全靠手拐子撑”中的“手拐子”对应哪个工具？',
+    options: ['擂色碗', '枕箱', '令圈笔', '封边笔'],
+    answerIndex: 1,
+    explanation: '枕箱是弧形木枕，能托住手腕让线条更稳。',
+  },
+  {
+    id: 'qa-5',
+    question: '用于“令圈”工序、可快速画出圆形线圈的工具是哪个？',
+    options: ['擂色捶', '令圈笔', '封边笔', '墨计'],
+    answerIndex: 1,
+    explanation: '令圈笔由多支笔杆组成，适合稳定画圆。',
+  },
+  {
+    id: 'qa-6',
+    question: '“广彩瓷的织金工艺只用纯金粉末，不用化学材料。”这个说法正确吗？',
+    options: ['正确', '错误'],
+    answerIndex: 1,
+    explanation: '错误。清末开始已使用化学金水，降低成本并便于保存。',
+  },
+]
+
+const qaCurrentQuestion = computed(() => qaQuestions[qaCurrentIndex.value] ?? null)
+const qaIsFinished = computed(() => qaCurrentIndex.value >= qaQuestions.length)
+const qaProgressPercent = computed(() => {
+  if (!qaQuestions.length) return 0
+  const doneCount = Math.min(qaCurrentIndex.value, qaQuestions.length)
+  return (doneCount / qaQuestions.length) * 100
+})
 
 const manualArtifactSpotMap = new Map<number, ManualArtifactSpot[]>([
   [
@@ -590,10 +761,131 @@ function createArtifactMarkerHtml(): string {
   `
 }
 
+function createQaGameMarkerHtml(): string {
+  return `
+    <div class="psv-qa-marker" aria-label="彩瓷密码互动问答">
+      <span class="psv-qa-marker__pulse"></span>
+      <span class="psv-qa-marker__core">问答</span>
+    </div>
+  `
+}
+
+function buildQaGameMarkers(node: PanoramaNodeConfig): MarkerConfig[] {
+  if (hallId.value !== 2) return []
+  if (node.nodeId !== 'n2') return []
+
+  const leftYaw = 3.2938727001
+  const rightYaw = 3.267442213958
+  const topPitch = -0.005393418033
+  const bottomPitch = -0.064027627977
+  const centerYaw = (leftYaw + rightYaw) / 2
+  const centerPitch = (topPitch + bottomPitch) / 2
+
+  return [
+    {
+      id: `qa-game-point-${node.nodeId}`,
+      position: {
+        yaw: centerYaw,
+        pitch: centerPitch,
+      },
+      anchor: 'center center',
+      html: createQaGameMarkerHtml(),
+      size: {
+        width: 84,
+        height: 84,
+      },
+      tooltip: '点击参与“彩瓷密码”互动问答',
+      data: {
+        kind: 'qa-game',
+      } satisfies QaGameMarkerData,
+    },
+    {
+      id: `qa-game-zone-${node.nodeId}`,
+      polygon: [
+        [leftYaw, topPitch],
+        [rightYaw, topPitch],
+        [rightYaw, bottomPitch],
+        [leftYaw, bottomPitch],
+      ],
+      svgStyle: {
+        fill: 'rgba(222, 177, 96, 0.22)',
+        stroke: 'rgba(229, 190, 118, 0.92)',
+        strokeWidth: '2px',
+      },
+      tooltip: '点击参与“彩瓷密码”互动问答',
+      data: {
+        kind: 'qa-game',
+      } satisfies QaGameMarkerData,
+    },
+  ]
+}
+
 function resolvePublicAssetUrl(assetPath: string): string {
   const base = import.meta.env.BASE_URL || '/'
   const normalizedBase = base.endsWith('/') ? base : `${base}/`
   return `${normalizedBase}${assetPath}`
+}
+
+function resetQaGameState() {
+  qaCurrentIndex.value = 0
+  qaScore.value = 0
+  qaSelectedIndex.value = null
+  qaAnswered.value = false
+  qaAnswerCorrect.value = false
+}
+
+async function openQaGameModal() {
+  resetQaGameState()
+  isQaGameModalOpen.value = true
+}
+
+function closeQaGameModal() {
+  isQaGameModalOpen.value = false
+}
+
+function answerQaQuestion(optionIndex: number) {
+  if (qaAnswered.value || !qaCurrentQuestion.value) return
+
+  qaSelectedIndex.value = optionIndex
+  qaAnswered.value = true
+  const isCorrect = optionIndex === qaCurrentQuestion.value.answerIndex
+  qaAnswerCorrect.value = isCorrect
+  if (isCorrect) qaScore.value += 1
+}
+
+function qaOptionClass(optionIndex: number): string {
+  if (!qaAnswered.value || !qaCurrentQuestion.value) {
+    return 'border-[#dccab3] bg-white/70 text-[#473729] hover:bg-[#f6ecdf]'
+  }
+
+  const isCorrectOption = optionIndex === qaCurrentQuestion.value.answerIndex
+  const isSelected = qaSelectedIndex.value === optionIndex
+
+  if (isCorrectOption) {
+    return 'border-[#56a46f] bg-[#e9f8ee] text-[#1f6f3f]'
+  }
+  if (isSelected) {
+    return 'border-[#d07968] bg-[#ffefec] text-[#9c3d30]'
+  }
+  return 'border-[#e3d3bc] bg-white/55 text-[#8c7a66]'
+}
+
+function nextQaQuestion() {
+  if (!qaAnswered.value) return
+
+  if (qaCurrentIndex.value < qaQuestions.length - 1) {
+    qaCurrentIndex.value += 1
+    qaSelectedIndex.value = null
+    qaAnswered.value = false
+    qaAnswerCorrect.value = false
+    return
+  }
+
+  qaCurrentIndex.value = qaQuestions.length
+}
+
+function restartQaGame() {
+  resetQaGameState()
 }
 
 function normalizeForCompare(text: string): string {
@@ -801,7 +1093,11 @@ function buildNavigationMarkers(node: PanoramaNodeConfig): MarkerConfig[] {
 
 function buildCurrentMarkers(): MarkerConfig[] {
   if (!currentNode.value) return []
-  return [...buildNavigationMarkers(currentNode.value), ...artifactMarkers.value]
+  return [
+    ...buildNavigationMarkers(currentNode.value),
+    ...buildQaGameMarkers(currentNode.value),
+    ...artifactMarkers.value,
+  ]
 }
 
 async function rebuildMarkers() {
@@ -969,6 +1265,11 @@ function clearSelectedArtifact() {
 function handleGlobalKeydown(event: KeyboardEvent) {
   if (event.key !== 'Escape') return
 
+  if (isQaGameModalOpen.value) {
+    closeQaGameModal()
+    return
+  }
+
   if (activeHotspotId.value) {
     clearSelectedArtifact()
     return
@@ -983,6 +1284,11 @@ function bindMarkerEvents() {
   markersPlugin?.addEventListener('select-marker', async (event: any) => {
     const data = event.marker?.data as MarkerPayload | undefined
     if (!data) return
+
+    if (data.kind === 'qa-game') {
+      await openQaGameModal()
+      return
+    }
 
     if (data.kind === 'navigation') {
       await moveInsideScene(data.targetNodeId)
@@ -1240,6 +1546,40 @@ onUnmounted(() => {
   box-shadow: 0 0 12px rgba(255, 255, 255, 0.96);
 }
 
+.psv-qa-marker {
+  position: relative;
+  width: 84px;
+  height: 84px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: auto;
+  cursor: pointer;
+}
+
+.psv-qa-marker__pulse {
+  position: absolute;
+  inset: 8px;
+  border-radius: 9999px;
+  border: 2px solid rgba(241, 208, 147, 0.95);
+  box-shadow:
+    0 0 16px rgba(244, 197, 108, 0.82),
+    inset 0 0 12px rgba(255, 240, 211, 0.35);
+  animation: qa-pulse 1.55s ease-in-out infinite;
+}
+
+.psv-qa-marker__core {
+  position: relative;
+  border-radius: 9999px;
+  background: rgba(93, 55, 21, 0.84);
+  color: rgba(255, 244, 225, 0.96);
+  padding: 6px 11px;
+  font-size: 12px;
+  line-height: 1;
+  letter-spacing: 0.02em;
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.28);
+}
+
 @keyframes nav-halo-pulse {
   0% {
     transform: scale(0.96);
@@ -1263,6 +1603,18 @@ onUnmounted(() => {
   }
   50% {
     transform: scale(1.18);
+    opacity: 1;
+  }
+}
+
+@keyframes qa-pulse {
+  0%,
+  100% {
+    transform: scale(0.96);
+    opacity: 0.78;
+  }
+  50% {
+    transform: scale(1.08);
     opacity: 1;
   }
 }
