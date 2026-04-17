@@ -79,7 +79,7 @@
             @click="clearSelectedArtifact"
           >
             <div
-              class="hotspot-number-rail absolute left-1/2 z-30 -translate-x-1/2 rounded-full border border-white/75 bg-[rgba(255,250,244,0.82)] shadow-[0_8px_20px_rgba(0,0,0,0.14)] backdrop-blur-md"
+              class="hotspot-number-rail absolute z-30 rounded-full border border-white/75 bg-[rgba(255,250,244,0.82)] shadow-[0_8px_20px_rgba(0,0,0,0.14)] backdrop-blur-md"
               :style="hotspotRailStyle"
               @click.stop
             >
@@ -1004,7 +1004,7 @@ onUnmounted(() => {
 .hotspot-number-button {
   appearance: none;
   -webkit-appearance: none;
-  width: auto;
+  width: 100%;
   height: 16px;
   margin: 0;
   border: 0;
@@ -1038,11 +1038,13 @@ onUnmounted(() => {
 
 .hotspot-number-rail {
   bottom: clamp(10px, 2.4%, 24px);
-  width: min(72%, max(180px, calc(var(--hotspot-count, 1) * 30px)));
-  padding: 8px 12px;
+  left: clamp(10px, 2.4%, 22px);
+  right: clamp(10px, 2.4%, 22px);
+  width: auto;
+  padding: 8px clamp(10px, 2.6vw, 18px);
   display: grid;
-  grid-auto-flow: column;
-  grid-auto-columns: 1fr;
+  grid-template-columns: repeat(var(--hotspot-count, 1), minmax(0, 1fr));
+  justify-items: center;
   align-items: center;
 }
 
@@ -1068,7 +1070,8 @@ onUnmounted(() => {
 
 @media (max-width: 640px) {
   .hotspot-number-rail {
-    width: min(84%, max(150px, calc(var(--hotspot-count, 1) * 24px)));
+    left: 8px;
+    right: 8px;
     padding: 6px 10px;
   }
 
