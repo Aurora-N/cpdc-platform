@@ -79,7 +79,8 @@
             @click="clearSelectedArtifact"
           >
             <div
-              class="hotspot-number-rail absolute bottom-2 left-1/2 z-30 flex -translate-x-1/2 items-center gap-2 rounded-full border border-white/75 bg-[rgba(255,250,244,0.82)] px-3 py-2 shadow-[0_8px_20px_rgba(0,0,0,0.14)] backdrop-blur-md"
+              class="hotspot-number-rail absolute left-1/2 z-30 -translate-x-1/2 rounded-full border border-white/75 bg-[rgba(255,250,244,0.82)] shadow-[0_8px_20px_rgba(0,0,0,0.14)] backdrop-blur-md"
+              :style="hotspotRailStyle"
               @click.stop
             >
               <button
@@ -399,6 +400,9 @@ const activeHotspot = computed(() => {
 const activeArtifactDescription = computed(() => {
   return activeHotspot.value?.artifact ?? null
 })
+const hotspotRailStyle = computed<Record<string, string>>(() => ({
+  '--hotspot-count': String(Math.max(activeHotspots.value.length, 1)),
+}))
 const interactiveImageViewportReady = computed(() => {
   return Boolean(interactiveImageViewportStyle.value.width && interactiveImageViewportStyle.value.height)
 })
@@ -1000,13 +1004,16 @@ onUnmounted(() => {
 .hotspot-number-button {
   appearance: none;
   -webkit-appearance: none;
-  width: 14px;
-  height: 14px;
+  width: auto;
+  height: 16px;
   margin: 0;
   border: 0;
   padding: 0;
   background: transparent;
   line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .hotspot-number-button__dot {
@@ -1027,6 +1034,16 @@ onUnmounted(() => {
   transform: scale(1.2);
   border-color: rgba(194, 153, 99, 0.95);
   background: rgba(194, 153, 99, 0.92);
+}
+
+.hotspot-number-rail {
+  bottom: clamp(10px, 2.4%, 24px);
+  width: min(72%, max(180px, calc(var(--hotspot-count, 1) * 30px)));
+  padding: 8px 12px;
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 1fr;
+  align-items: center;
 }
 
 .artifact-description-mask {
@@ -1051,13 +1068,12 @@ onUnmounted(() => {
 
 @media (max-width: 640px) {
   .hotspot-number-rail {
-    gap: 6px;
+    width: min(84%, max(150px, calc(var(--hotspot-count, 1) * 24px)));
     padding: 6px 10px;
   }
 
   .hotspot-number-button {
-    width: 12px;
-    height: 12px;
+    height: 14px;
   }
 
   .hotspot-number-button__dot {
