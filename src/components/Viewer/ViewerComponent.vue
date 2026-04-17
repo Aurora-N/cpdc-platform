@@ -4,7 +4,12 @@
 
     <div
       v-if="activeHallVideoUrl"
-      class="absolute inset-0 z-[995] bg-black"
+      class="absolute inset-0 z-[995]"
+      :class="
+        isFullscreenVideo
+          ? 'bg-black'
+          : 'flex items-center justify-center bg-[rgba(0,0,0,0.72)] p-4 sm:p-6'
+      "
       @click.self="closeHallVideo"
     >
       <button
@@ -16,7 +21,12 @@
       </button>
       <video
         ref="hallVideoElement"
-        class="h-full w-full object-cover"
+        class="bg-black"
+        :class="
+          isFullscreenVideo
+            ? 'h-full w-full object-cover'
+            : 'max-h-[88vh] w-full max-w-[1100px] rounded-lg object-contain shadow-[0_14px_40px_rgba(0,0,0,0.45)]'
+        "
         :src="activeHallVideoUrl"
         controls
         autoplay
@@ -240,6 +250,7 @@ const isSwitching = ref(false)
 const artifactMarkers = ref<MarkerConfig[]>([])
 const activeImageModal = ref<ArtifactImageModalState | null>(null)
 const activeHallVideoUrl = ref('')
+const isFullscreenVideo = ref(true)
 const activeHotspotId = ref<string | null>(null)
 const interactiveImageViewportStyle = ref<Record<string, string>>({})
 
@@ -554,6 +565,7 @@ async function playHallVideoForNode(nodeId: string) {
   const videoPath = resolveHallVideoPath(hall, nodeId)
   if (!videoPath) return
 
+  isFullscreenVideo.value = true
   activeHallVideoUrl.value = resolvePublicAssetUrl(videoPath)
   await nextTick()
 
@@ -567,6 +579,7 @@ async function playHallVideoForNode(nodeId: string) {
 }
 
 async function openVideoOverlay(videoUrl: string) {
+  isFullscreenVideo.value = false
   activeHallVideoUrl.value = videoUrl
   await nextTick()
 
@@ -584,6 +597,7 @@ function closeHallVideo() {
     hallVideoElement.value.pause()
     hallVideoElement.value.currentTime = 0
   }
+  isFullscreenVideo.value = true
   activeHallVideoUrl.value = ''
 }
 
