@@ -185,6 +185,7 @@ interface ArtifactMarkerData {
   title: string
   body?: string
   imageUrl?: string
+  videoUrl?: string
   interactiveImageKey?: Exhibition1InteractiveImageKey
 }
 
@@ -194,7 +195,8 @@ interface ManualArtifactSpot {
   id: string
   nodeId: string
   title: string
-  imagePath: string
+  imagePath?: string
+  videoPath?: string
   interactiveImageKey?: Exhibition1InteractiveImageKey
   position: {
     yaw: AngleValue
@@ -268,6 +270,20 @@ const manualArtifactSpotMap = new Map<number, ManualArtifactSpot[]>([
         imagePath: 'exhibition/exhibition1/3.png',
         interactiveImageKey: 'exhibition1-3',
         position: { yaw: 1.5223379745108323, pitch: 0.3584058394379823 },
+      },
+      {
+        id: 'n1-ex1-v1',
+        nodeId: 'n1',
+        title: '展厅讲解视频 1',
+        videoPath: 'exhibition/exhibition1/v1.mp4',
+        position: { yaw: 5.39, pitch: -0.009007742687 },
+      },
+      {
+        id: 'n1-ex1-v2',
+        nodeId: 'n1',
+        title: '展厅讲解视频 2',
+        videoPath: 'exhibition/exhibition1/v2.mp4',
+        position: { yaw: 0.65, pitch: 0.03 },
       },
       {
         id: 'n2-ex1-4',
@@ -550,6 +566,19 @@ async function playHallVideoForNode(nodeId: string) {
   }
 }
 
+async function openVideoOverlay(videoUrl: string) {
+  activeHallVideoUrl.value = videoUrl
+  await nextTick()
+
+  if (!hallVideoElement.value) return
+  hallVideoElement.value.currentTime = 0
+  try {
+    await hallVideoElement.value.play()
+  } catch {
+    // 浏览器可能拦截自动播放，此时保留 controls 供用户手动播放
+  }
+}
+
 function closeHallVideo() {
   if (hallVideoElement.value) {
     hallVideoElement.value.pause()
@@ -695,11 +724,12 @@ async function loadArtifactMarkers() {
       width: 38,
       height: 38,
     },
-    tooltip: `点击查看${spot.title}`,
+    tooltip: spot.videoPath ? `点击播放${spot.title}` : `点击查看${spot.title}`,
     data: {
       kind: 'artifact',
       title: spot.title,
-      imageUrl: resolvePublicAssetUrl(spot.imagePath),
+      imageUrl: spot.imagePath ? resolvePublicAssetUrl(spot.imagePath) : undefined,
+      videoUrl: spot.videoPath ? resolvePublicAssetUrl(spot.videoPath) : undefined,
       interactiveImageKey: spot.interactiveImageKey,
     } satisfies ArtifactMarkerData,
   }))
@@ -741,6 +771,12 @@ async function moveInsideScene(targetNodeId: string) {
 }
 
 function showArtifactModal(data: ArtifactMarkerData) {
+  if (data.videoUrl) {
+    closeArtifactModal()
+    void openVideoOverlay(data.videoUrl)
+    return
+  }
+
   const interactiveImage = getExhibition1InteractiveImageConfig(data.interactiveImageKey ?? null)
   const imageUrl =
     data.imageUrl || (interactiveImage ? resolvePublicAssetUrl(interactiveImage.imagePath) : '')
