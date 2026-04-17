@@ -3,6 +3,29 @@
     <div ref="viewerContainer" class="h-full w-full" />
 
     <div
+      v-if="activeHallVideoUrl"
+      class="absolute inset-0 z-[995] bg-black"
+      @click.self="closeHallVideo"
+    >
+      <button
+        class="absolute top-4 right-4 z-10 flex h-10 w-10 cursor-pointer items-center justify-center rounded-full border border-white/50 bg-black/35 text-xl text-white transition hover:bg-black/55"
+        aria-label="关闭视频"
+        @click="closeHallVideo"
+      >
+        ×
+      </button>
+      <video
+        ref="hallVideoElement"
+        class="h-full w-full object-cover"
+        :src="activeHallVideoUrl"
+        controls
+        autoplay
+        playsinline
+        @ended="closeHallVideo"
+      />
+    </div>
+
+    <div
       v-if="showFogMask"
       class="pointer-events-none absolute right-0 bottom-0 left-0 z-[990] h-[30%] bg-gradient-to-t from-[#07101b]/88 via-[#0b1a2d]/52 to-transparent"
     />
@@ -207,12 +230,14 @@ const props = defineProps({
 const viewerContainer = ref<HTMLElement | null>(null)
 const interactiveImageFrame = ref<HTMLElement | null>(null)
 const interactiveImageElement = ref<HTMLImageElement | null>(null)
+const hallVideoElement = ref<HTMLVideoElement | null>(null)
 const coordinateHistory = ref<CoordinateEntry[]>([])
 const currentSceneConfig = ref<HallSceneConfig | null>(null)
 const currentNodeId = ref('')
 const isSwitching = ref(false)
 const artifactMarkers = ref<MarkerConfig[]>([])
 const activeImageModal = ref<ArtifactImageModalState | null>(null)
+const activeHallVideoUrl = ref('')
 const activeHotspotId = ref<string | null>(null)
 const interactiveImageViewportStyle = ref<Record<string, string>>({})
 
@@ -493,6 +518,46 @@ function resolvePublicAssetUrl(assetPath: string): string {
   return `${normalizedBase}${assetPath}`
 }
 
+function resolveHallVideoPath(hall: number, nodeId: string): string {
+  if (hall === 2) {
+    return nodeId === 'n2' ? 'exhibition/video/1.2.mp4' : 'exhibition/video/1.1.mp4'
+  }
+  if (hall === 1) {
+    return 'exhibition/video/2.mp4'
+  }
+  if (hall === 3) {
+    return 'exhibition/video/3.mp4'
+  }
+  return ''
+}
+
+async function playHallVideoForNode(nodeId: string) {
+  const hall = currentSceneConfig.value?.hallId
+  if (!hall) return
+
+  const videoPath = resolveHallVideoPath(hall, nodeId)
+  if (!videoPath) return
+
+  activeHallVideoUrl.value = resolvePublicAssetUrl(videoPath)
+  await nextTick()
+
+  if (!hallVideoElement.value) return
+  hallVideoElement.value.currentTime = 0
+  try {
+    await hallVideoElement.value.play()
+  } catch {
+    // 浏览器可能拦截自动播放，此时保留 controls 供用户手动播放
+  }
+}
+
+function closeHallVideo() {
+  if (hallVideoElement.value) {
+    hallVideoElement.value.pause()
+    hallVideoElement.value.currentTime = 0
+  }
+  activeHallVideoUrl.value = ''
+}
+
 function updateInteractiveImageViewport() {
   if (!interactiveImageFrame.value || !interactiveImageElement.value) {
     interactiveImageViewportStyle.value = {}
@@ -667,6 +732,7 @@ async function moveInsideScene(targetNodeId: string) {
     currentNodeId.value = targetNode.nodeId
     await loadArtifactMarkers()
     await rebuildMarkers()
+    await playHallVideoForNode(targetNode.nodeId)
   } catch (error) {
     console.error('场景切换失败:', error)
   } finally {
@@ -750,6 +816,7 @@ async function initViewer() {
     }
 
   currentNodeId.value = entryNode.nodeId
+  await playHallVideoForNode(entryNode.nodeId)
 
   viewer = new Viewer({
     container: viewerContainer.value,
@@ -782,6 +849,7 @@ async function initViewer() {
 }
 
 function destroyViewer() {
+  closeHallVideo()
   closeArtifactModal()
   if (viewer) {
     viewer.destroy()
