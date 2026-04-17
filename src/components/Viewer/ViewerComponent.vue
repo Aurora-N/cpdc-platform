@@ -152,6 +152,13 @@
                       @wheel.stop
                       @touchmove.stop
                     >
+                      <img
+                        v-if="activeArtifactMediaUrl"
+                        :src="activeArtifactMediaUrl"
+                        :alt="activeArtifactDescription.title"
+                        class="mb-3 h-auto w-full rounded-[12px] border border-[#d8c6ad]/55 bg-white object-contain"
+                        loading="lazy"
+                      />
                       {{ activeArtifactDescription.content }}
                     </div>
                   </div>
@@ -170,6 +177,7 @@ import { Viewer } from '@photo-sphere-viewer/core'
 import { MarkersPlugin, type MarkerConfig } from '@photo-sphere-viewer/markers-plugin'
 import { computed, nextTick, onMounted, onUnmounted, ref, watch } from 'vue'
 import {
+  exhibition1InteractiveImageKeys,
   getExhibition1InteractiveImageConfig,
   type ArtifactHotspot,
   type Exhibition1InteractiveImageKey,
@@ -472,6 +480,28 @@ const activeArtifactDescription = computed(() => {
     ...hotspotArtifact,
     content: fullContent,
   }
+})
+const activeArtifactMediaUrl = computed(() => {
+  const interactiveImageKey = activeImageModal.value?.interactiveImage?.key
+  const hotspotId = activeHotspotId.value
+  if (!interactiveImageKey || !hotspotId) return ''
+
+  let mediaIndexOffset = 0
+
+  for (const key of exhibition1InteractiveImageKeys) {
+    const config = getExhibition1InteractiveImageConfig(key)
+    if (!config) continue
+
+    if (key === interactiveImageKey) {
+      const hotspotIndex = config.hotspots.findIndex((hotspot) => hotspot.id === hotspotId)
+      if (hotspotIndex === -1) return ''
+      return resolvePublicAssetUrl(`media/image${mediaIndexOffset + hotspotIndex + 1}.png`)
+    }
+
+    mediaIndexOffset += config.hotspots.length
+  }
+
+  return ''
 })
 const hotspotRailStyle = computed<Record<string, string>>(() => ({
   '--hotspot-count': String(Math.max(activeHotspots.value.length, 1)),
