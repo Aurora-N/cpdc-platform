@@ -78,20 +78,22 @@
             :style="interactiveImageViewportStyle"
             @click="clearSelectedArtifact"
           >
-            <button
-              v-for="(hotspot, index) in activeHotspots"
-              :key="hotspot.id"
-              :style="getHotspotStyle(hotspot)"
-              class="hotspot-hit-area group absolute z-30 cursor-pointer border-none bg-transparent p-0 appearance-none focus:outline-none focus-visible:ring-2 focus-visible:ring-[#c9a46a]/45"
-              :class="{ 'is-active': activeHotspotId === hotspot.id }"
-              :aria-label="`查看 ${hotspot.artifact.title}`"
-              :title="hotspot.artifact.title"
-              @click.stop="selectArtifactHotspot(hotspot.id)"
+            <div
+              class="hotspot-number-rail absolute bottom-2 left-1/2 z-30 flex -translate-x-1/2 items-center gap-2 rounded-full border border-white/75 bg-[rgba(255,250,244,0.82)] px-3 py-2 shadow-[0_8px_20px_rgba(0,0,0,0.14)] backdrop-blur-md"
+              @click.stop
             >
-              <span class="hotspot-hit-area__pin">
-                {{ index + 1 }}
-              </span>
-            </button>
+              <button
+                v-for="(hotspot, index) in activeHotspots"
+                :key="hotspot.id"
+                class="hotspot-number-button cursor-pointer border-none bg-transparent p-0 appearance-none focus:outline-none focus-visible:ring-2 focus-visible:ring-[#c9a46a]/45"
+                :class="{ 'is-active': activeHotspotId === hotspot.id }"
+                :aria-label="`查看 ${hotspot.artifact.title}`"
+                :title="hotspot.artifact.title"
+                @click.stop="selectArtifactHotspot(hotspot.id)"
+              >
+                <span class="hotspot-number-button__dot" />
+              </button>
+            </div>
 
             <Transition name="artifact-modal">
               <div
@@ -485,15 +487,6 @@ function resolvePublicAssetUrl(assetPath: string): string {
   const base = import.meta.env.BASE_URL || '/'
   const normalizedBase = base.endsWith('/') ? base : `${base}/`
   return `${normalizedBase}${assetPath}`
-}
-
-function getHotspotStyle(hotspot: ArtifactHotspot) {
-  return {
-    left: `${hotspot.x}%`,
-    top: `${hotspot.y}%`,
-    width: `${hotspot.width}%`,
-    height: `${hotspot.height}%`,
-  }
 }
 
 function updateInteractiveImageViewport() {
@@ -1004,69 +997,36 @@ onUnmounted(() => {
   }
 }
 
-@keyframes image-hotspot-breathe {
-  0%,
-  100% {
-    opacity: 0.82;
-    transform: scale(1);
-  }
-  50% {
-    opacity: 1;
-    transform: scale(1.04);
-  }
-}
-
-.hotspot-hit-area {
+.hotspot-number-button {
   appearance: none;
   -webkit-appearance: none;
-  min-width: 24px;
-  min-height: 24px;
+  width: 14px;
+  height: 14px;
   margin: 0;
   border: 0;
   padding: 0;
-  transform: translate(-50%, -50%);
   background: transparent;
   line-height: 1;
 }
 
-.hotspot-hit-area__pin {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  z-index: 2;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 18px;
-  height: 18px;
+.hotspot-number-button__dot {
+  display: block;
+  width: 10px;
+  height: 10px;
   border-radius: 9999px;
-  transform: translate(-50%, -50%);
-  border: 1px solid rgba(255, 255, 255, 0.95);
-  background: radial-gradient(
-    circle,
-    rgba(255, 250, 243, 0.98) 0%,
-    rgba(232, 201, 155, 0.94) 65%,
-    rgba(194, 153, 99, 0.94) 100%
-  );
-  color: rgba(59, 34, 13, 0.92);
-  font-size: 9px;
-  font-weight: 700;
-  box-shadow:
-    0 3px 10px rgba(138, 108, 66, 0.22),
-    0 0 0 4px rgba(236, 213, 181, 0.18);
-  animation: image-hotspot-breathe 2.6s ease-in-out infinite;
+  border: 1px solid rgba(171, 146, 112, 0.65);
+  background: rgba(246, 235, 220, 0.95);
   transition:
-    transform 0.22s ease,
-    box-shadow 0.22s ease,
-    border-color 0.22s ease;
+    transform 0.2s ease,
+    background-color 0.2s ease,
+    border-color 0.2s ease;
 }
 
-.hotspot-hit-area:hover .hotspot-hit-area__pin,
-.hotspot-hit-area.is-active .hotspot-hit-area__pin {
-  transform: translate(-50%, -50%) scale(1.14);
-  box-shadow:
-    0 6px 14px rgba(140, 108, 61, 0.26),
-    0 0 0 6px rgba(231, 202, 161, 0.28);
+.hotspot-number-button:hover .hotspot-number-button__dot,
+.hotspot-number-button.is-active .hotspot-number-button__dot {
+  transform: scale(1.2);
+  border-color: rgba(194, 153, 99, 0.95);
+  background: rgba(194, 153, 99, 0.92);
 }
 
 .artifact-description-mask {
@@ -1090,15 +1050,19 @@ onUnmounted(() => {
 }
 
 @media (max-width: 640px) {
-  .hotspot-hit-area {
-    min-width: 28px;
-    min-height: 28px;
+  .hotspot-number-rail {
+    gap: 6px;
+    padding: 6px 10px;
   }
 
-  .hotspot-hit-area__pin {
-    width: 22px;
-    height: 22px;
-    font-size: 10px;
+  .hotspot-number-button {
+    width: 12px;
+    height: 12px;
+  }
+
+  .hotspot-number-button__dot {
+    width: 9px;
+    height: 9px;
   }
 
   .artifact-description-modal {
