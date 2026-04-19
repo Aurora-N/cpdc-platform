@@ -359,7 +359,7 @@ const props = defineProps({
   },
   debugMode: {
     type: Boolean,
-    default: false,
+    default:false,
   },
 })
 
@@ -771,13 +771,12 @@ function createQaGameMarkerHtml(): string {
 }
 
 function buildQaGameMarkers(node: PanoramaNodeConfig): MarkerConfig[] {
-  if (hallId.value !== 2) return []
-  if (node.nodeId !== 'n2') return []
+  if (hallId.value !== 3) return []
 
-  const leftYaw = 3.2938727001
-  const rightYaw = 3.267442213958
-  const topPitch = -0.005393418033
-  const bottomPitch = -0.064027627977
+  const leftYaw = 3.079102512975
+  const rightYaw = 3.079102512975
+  const topPitch = -0.107872711536
+  const bottomPitch = -0.107872711536
   const centerYaw = (leftYaw + rightYaw) / 2
   const centerPitch = (topPitch + bottomPitch) / 2
 
