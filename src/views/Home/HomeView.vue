@@ -20,15 +20,15 @@ import GloriousNewChapter from './components/GloriousNewChapter.vue'
 
 const images = [
   {
-    src: '/cpdc-platform/1.png',
+    src: '/cpdc-platform/home/p1.jpg',
     alt: '广彩瓷1',
   },
   {
-    src: '/cpdc-platform/2.png',
+    src: '/cpdc-platform/home/p2.jpg',
     alt: '广彩诞生',
   },
   {
-    src: '/cpdc-platform/3.png',
+    src: '/cpdc-platform/home/p3.jpg',
     alt: '数字焕新',
   },
 ]
